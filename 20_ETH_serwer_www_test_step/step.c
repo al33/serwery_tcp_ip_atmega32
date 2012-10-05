@@ -32,7 +32,6 @@ enum edir dir = lewo;
 void silnik_stop(void);
 void kroki_lewo(void);
 void kroki_prawo(void);
-void check_and_step(void);
 
 	void silnik_stop(void) {
 		PORTD &= ~(A1|A2|B1|B2);
@@ -60,12 +59,4 @@ void check_and_step(void);
 		if( kr == 3 ) { KROK1; }
 
 		if( ++kr > 3 ) kr=0;
-	}
-	void check_and_step(void)
-	{
-		if(ms2_flag && steps_todo > 0)
-		{
-			kroki_lewo();
-			ms2_flag=0;
-		}
 	}
