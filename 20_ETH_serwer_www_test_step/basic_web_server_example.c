@@ -27,13 +27,18 @@
 #include "step.h"
 #include "websrv_help_functions.h"
 
-/*STEPPER*/
+
+
+/*STEPPER VARIABLES*/
+#define STEPS 100
 volatile uint8_t ms2_flag;
-uint8_t steps = 0;
-uint8_t step_cmd = 0;
-uint8_t step_x = 0;
-uint8_t start_stepper = 0;
-/*END OF STEPPER*/
+extern uint8_t steps_cmd;
+extern uint8_t start_stepper;
+extern uint8_t steps_state;
+extern uint8_t steps_received;
+extern uint8_t steps_todo;
+extern uint8_t oversteps;
+/*END OF STEPPER VARIABLES*/
 
 
 // ustalamy adres MAC
@@ -58,29 +63,8 @@ int8_t analyse_get_url(char *str)
         }else{
                 return(-1);
         }
-        /*
-        if (strncmp("favicon.ico",str,11)==0){
-                return(2);
-        }
-        // the password:
-        if(verify_password(str)==0){
-                return(-1);
-        }
-        // move forward to the first space or '/'
-        while(loop){
-                if(*str==' '){
-                        // end of url and no slash after password:
-                        return(-2);
-                }
-                if(*str=='/'){
-                        // end of password
-                        loop=0;
-                        continue;
-                }
-                str++;
-                loop--; // do not loop too long
-        }*/
-        // str is now something like password?sw=1 or just end of url
+
+        // str is now end of ip adress
         if (find_key_val(str,gStrbuf,5,"sw")){
                 if (gStrbuf[0]=='0'){
                         return(0);
@@ -89,17 +73,25 @@ int8_t analyse_get_url(char *str)
                         return(1);
                 }
                 if(gStrbuf[0]=='2'){
-                	step_cmd = 2;
-                	//return(2);
+                	steps_cmd = 2;
                 }
                 if(gStrbuf[0]=='3'){
                 	return(3);
                 }
         }
-
-        if (step_cmd==2){
+        //STEP SETTINGS
+        if (steps_cmd==2){
                 	if(find_key_val(str, gStrbuf,5,"ox")){
-                		step_x = atoi(gStrbuf);
+                		steps_received = atoi(gStrbuf);
+                		steps_state += steps_received;
+                		if(steps_state > STEPS){
+                			oversteps = steps_state % STEPS;
+                			steps_state = STEPS - 1;
+                			steps_todo = steps_received - oversteps;
+                		}
+                		else{
+                			steps_todo = steps_received;
+                		}
                 		return(2);
                 	}
         }
@@ -182,13 +174,17 @@ int main(void){
                 dat_p=packetloop_icmp_tcp(buf,enc28j60PacketReceive(BUFFER_SIZE, buf));
 
 
-                if(start_stepper)
+                if(start_stepper && steps_todo)
                	{
                 	if(ms2_flag){				//krecenie motorkiem bez przerwy
                 		kroki_lewo();
+                		steps_todo --;
                         ms2_flag=0;
                     }
                 }
+                else {
+					silnik_stop();
+				}
 
 
 
@@ -213,10 +209,7 @@ int main(void){
                 		plen=http200ok();
 						plen=print_webpage(buf,(PORTD & (1<<PORTD7)));
                         goto SENDTCP;
-                }//else{
-                   //     dat_p=fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 401 Unauthorized\r\nContent-Type: text/html\r\n\r\n<h1>401 Unauthorized</h1>"));
-                     //   goto SENDTCP;
-                //}
+                }
                 cmd=analyse_get_url((char *)&(buf[dat_p+4]));
                                 // for possible status codes see:
                                 // http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html
@@ -240,12 +233,7 @@ int main(void){
                                 	start_stepper = 0;
                                 	silnik_stop();
                                 }
-                                /*
-                                if (cmd==-2){
-                                        // redirect to the right base url (e.g add a trailing slash):
-                                        plen=moved_perm(buf,1);
-                                        goto SENDTCP;
-                                }*/
+
                                 // if (cmd==-2) or any other value
                                 // just display the status:
                                 plen=print_webpage(buf,(PORTD & (1<<PORTD7)));

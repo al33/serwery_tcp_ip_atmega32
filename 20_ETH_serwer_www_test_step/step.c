@@ -12,8 +12,16 @@
 #include <util/delay.h>
 #include "step.h"
 
+
+
 extern volatile uint8_t ms2_flag;
-extern uint8_t step_x;
+uint8_t start_stepper = 0;
+uint8_t steps_state = 0;
+uint8_t steps_received = 0;
+uint8_t steps_todo = 0;
+uint8_t oversteps = 0;
+uint8_t steps_cmd = 0;
+
 
 enum edir {lewo, prawo, stop};
 enum edir dir = lewo;
@@ -53,7 +61,7 @@ void check_and_step(void);
 	}
 	void check_and_step(void)
 	{
-		if(ms2_flag && step_x > 0)
+		if(ms2_flag && steps_todo > 0)
 		{
 			kroki_lewo();
 			ms2_flag=0;
