@@ -38,6 +38,8 @@ extern uint8_t steps_state;
 extern uint8_t steps_received;
 extern uint8_t steps_todo;
 extern uint8_t oversteps;
+extern uint8_t right_dir;
+extern uint8_t left_dir;
 /*END OF STEPPER VARIABLES*/
 
 
@@ -84,6 +86,7 @@ int8_t analyse_get_url(char *str)
                 	if(find_key_val(str, gStrbuf,5,"ox")){
                 		steps_received = atoi(gStrbuf);
                 		steps_state += steps_received;
+                		left_dir = 1;
                 		if(steps_state > STEPS){
                 			oversteps = steps_state % STEPS;
                 			steps_state = STEPS - 1;
@@ -92,8 +95,22 @@ int8_t analyse_get_url(char *str)
                 		else{
                 			steps_todo = steps_received;
                 		}
-                		return(2);
                 	}
+
+                	if(find_key_val(str, gStrbuf,5,"oy")){
+                		steps_received = atoi(gStrbuf);
+                		steps_state += steps_received;
+                		right_dir = 1;
+                  		if(steps_state > STEPS){
+                  			oversteps = steps_state % STEPS;
+                  			steps_state = STEPS - 1;
+                  			steps_todo = steps_received - oversteps;
+                  		}
+                      	else{
+                      		steps_todo = steps_received;
+                       	}
+                	}
+                	return(2);
         }
         return(-3);
 }
@@ -125,8 +142,13 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
 
         /*STEPPER*/
                    plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form METHOD=get action=\""));
-                   plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<input type=hidden name=sw value=2>\n<input size=20 type=text name=ox>\n<br><input size=20 type=text name=oy>\n"));
-                   plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE STEPPER\"></form>\n"));
+                   plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<input type=hidden name=sw value=2>\nLEFT<input size=20 type=text name=ox>\n<br>"));
+                   plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE LEFT\"></form>\n"));
+
+                   plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form METHOD=get action=\""));
+                   plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<input type=hidden name=sw value=2>\nRIGHT<input size=20 type=text name=oy>\n<br>"));
+                   plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE RIGHT\"></form>\n"));
+
                    plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=3\">TURN OFF STEPPER</a>\n"));
 
 
@@ -173,18 +195,33 @@ int main(void){
                 // read packet, handle ping and wait for a tcp packet:
                 dat_p=packetloop_icmp_tcp(buf,enc28j60PacketReceive(BUFFER_SIZE, buf));
 
+//!!!!!!!!!!	REQUESTY DO SILNIKA PO TYM KOMENTARZU BO if(dat_p==0)
+//PRZY DRUGIM PRZEBIEGU PETLI OMIJA CALEGO while() !!!!!!!!!!
+
 
                 if(start_stepper && steps_todo)
                	{
-                	if(ms2_flag){				//krecenie motorkiem bez przerwy
-                		kroki_lewo();
-                		steps_todo --;
-                        ms2_flag=0;
-                    }
+                	if(left_dir){
+                		if(ms2_flag){
+                			kroki_lewo();
+                			steps_todo --;
+                			ms2_flag=0;
+                		}
+                	}
+                	if(right_dir)
+                	{
+                		if(ms2_flag){
+                			kroki_prawo();
+                			steps_todo --;
+                		    ms2_flag=0;
+                		}
+                	}
                 }
                 else {
 					silnik_stop();
+					start_stepper = 0;
 				}
+
 
 
 
