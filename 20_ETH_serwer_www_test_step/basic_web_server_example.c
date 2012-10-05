@@ -84,7 +84,7 @@ int8_t analyse_get_url(char *str)
         if (steps_cmd==2){
                 	if(find_key_val(str, gStrbuf,5,"ox")){
                 		steps_received = atoi(gStrbuf);
-                		steps_state += steps_received;
+                		steps_state += (steps_received + 1);
                 		left_dir = 1;
                 		right_dir = 0;
                 		if(steps_state > STEPS){
@@ -99,7 +99,7 @@ int8_t analyse_get_url(char *str)
 
                 	if(find_key_val(str, gStrbuf,5,"oy")){
                 		steps_received = atoi(gStrbuf);
-                		steps_state += steps_received;
+                		steps_state += (steps_received + 1);
                 		right_dir = 1;
                 		left_dir = 0;
                   		if(steps_state > STEPS){
@@ -203,7 +203,6 @@ int main(void){
                 if(start_stepper && steps_todo)
                	{
                 	if(left_dir){
-                		PORTD|= (1<<PORTD7);
                 		if(ms2_flag){
                 			kroki_lewo();
                 			steps_todo --;
