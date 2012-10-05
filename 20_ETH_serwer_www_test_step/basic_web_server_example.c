@@ -202,6 +202,7 @@ int main(void){
                 if(start_stepper && steps_todo)
                	{
                 	if(left_dir){
+                		PORTD|= (1<<PORTD7);
                 		if(ms2_flag){
                 			kroki_lewo();
                 			steps_todo --;
