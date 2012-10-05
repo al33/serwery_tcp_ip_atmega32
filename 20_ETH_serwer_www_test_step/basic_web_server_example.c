@@ -13,7 +13,6 @@
  * MODYFIKACJE: Miros³aw Kardaœ --- ATmega32
  * MODYFIKACJE: Robert Mleczko --- Silniki krokowe
  *
- * Tralalaa cos zmienilem i co teraz?
  *
  *********************************************/
 #include <avr/io.h>
@@ -87,6 +86,7 @@ int8_t analyse_get_url(char *str)
                 		steps_received = atoi(gStrbuf);
                 		steps_state += steps_received;
                 		left_dir = 1;
+                		right_dir = 0;
                 		if(steps_state > STEPS){
                 			oversteps = steps_state % STEPS;
                 			steps_state = STEPS - 1;
@@ -101,6 +101,7 @@ int8_t analyse_get_url(char *str)
                 		steps_received = atoi(gStrbuf);
                 		steps_state += steps_received;
                 		right_dir = 1;
+                		left_dir = 0;
                   		if(steps_state > STEPS){
                   			oversteps = steps_state % STEPS;
                   			steps_state = STEPS - 1;
