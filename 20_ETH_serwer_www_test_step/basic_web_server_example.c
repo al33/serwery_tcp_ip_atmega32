@@ -13,6 +13,8 @@
  * MODYFIKACJE: Miros³aw Kardaœ --- ATmega32
  * MODYFIKACJE: Robert Mleczko --- Silniki krokowe
  *
+ * Tralalaa cos zmienilem i co teraz?
+ *
  *********************************************/
 #include <avr/io.h>
 #include <avr/interrupt.h>
