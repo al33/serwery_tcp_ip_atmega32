@@ -21,6 +21,8 @@ uint8_t steps_received = 0;
 uint8_t steps_todo = 0;
 uint8_t oversteps = 0;
 uint8_t steps_cmd = 0;
+uint8_t right_dir = 0;
+uint8_t left_dir = 0;
 
 
 enum edir {lewo, prawo, stop};
