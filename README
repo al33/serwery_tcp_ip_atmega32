@@ -1,0 +1,39 @@
+Serwer www oparty na kodzie z tuxgraphics.org
+Zmodyfikowany do obslugi Atmega32 --- kod z ksiazki Miroslawa Kardasia
+Atmega32 kwarc 16MHz
+Enc28j60 3.3V z wylaczonym clkout ip: 192.168.0.110
+Konwerter poziomow M32 <-> enc28j60 - 74HC125
+Silnik krokowy bipolarny EM-463 5V - 100 krokow
+Sterownik silnika - L293D
+
+PRACOWAC NA:
+20_ETH_serwer_www_test_step
+
+TODO:
+---
+Wrzucenie obslugi silnika do przerwania? (bo gubi kroki)
+---
+Kroki prawo i lewo o max 100
+eg.
+if(kroki_lewo = 76){
+	kroki_prawo !<76;
+}
+---
+Dorobienie poruszania na osi OY
+Zakres 180 stopni (50 krokow)
+if(kroki_gora = 36){
+	kroki dol !<36;
+}
+---
+Zapisywanie current_position do EEPROM aby przy ponownym uruchomieniu wracal do ostatniej pozycji
+---
+Zczytywanie current_position z EEPROM przy uruchomieniu ukladu ew. ustawianie silnikow na pozycji OX:0;OY:0
+---
+Ustawienie automatycznego zapisu pozycji do EEPROM w przypadku spadku zasilania (event na INT0)
+---
+suwaki w js do porusznia na osiach OX i OY
+---
+Optymalizacja kodu i strony www
+---
+Projekt plytki drukowanej (www.merkar.pl) katowice
+---
