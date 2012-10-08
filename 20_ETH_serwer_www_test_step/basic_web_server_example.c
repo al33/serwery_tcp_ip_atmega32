@@ -33,10 +33,10 @@
 volatile uint8_t ms2_flag;
 extern uint8_t steps_cmd;
 extern uint8_t start_stepper;
-extern uint8_t steps_state;
+extern int8_t steps_state;
 extern uint8_t steps_received;
-extern uint8_t steps_todo;
-extern uint8_t oversteps;
+extern int8_t steps_todo;
+extern int8_t oversteps;
 extern uint8_t right_dir;
 extern uint8_t left_dir;
 /*END OF STEPPER VARIABLES*/
@@ -92,23 +92,19 @@ int8_t analyse_get_url(char *str)
                 			steps_state = STEPS - 1;
                 			steps_todo = steps_received - oversteps;
                 		}
-                		else if(steps_todo < 0){
-                			oversteps=steps_state*-1%STEPS;
-                			steps_state = 0;
-                		}
                 		else{
                 			steps_todo = steps_received;
                 		}
                 	}
                 	if(find_key_val(str, gStrbuf,5,"oy")){
                 		steps_received = atoi(gStrbuf);
-                		steps_state += (steps_received + 1);
+                		steps_state -= steps_received;
                 		right_dir = 1;
                 		left_dir = 0;
-                  		if(steps_state > STEPS){
-                  			oversteps = steps_state % STEPS;
-                  			steps_state = STEPS - 1;
-                  			steps_todo = steps_received - oversteps;
+                  		if(steps_state < 0){
+                  			oversteps = (steps_state*-1) % STEPS;
+                  			steps_state = 0;
+                  			steps_todo = steps_received + oversteps;
                   		}
                       	else{
                       		steps_todo = steps_received;
