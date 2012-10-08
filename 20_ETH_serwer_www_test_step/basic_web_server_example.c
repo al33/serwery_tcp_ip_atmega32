@@ -92,11 +92,14 @@ int8_t analyse_get_url(char *str)
                 			steps_state = STEPS - 1;
                 			steps_todo = steps_received - oversteps;
                 		}
+                		else if(steps_todo < 0){
+                			oversteps=steps_state*-1%STEPS;
+                			steps_state = 0;
+                		}
                 		else{
                 			steps_todo = steps_received;
                 		}
                 	}
-
                 	if(find_key_val(str, gStrbuf,5,"oy")){
                 		steps_received = atoi(gStrbuf);
                 		steps_state += (steps_received + 1);

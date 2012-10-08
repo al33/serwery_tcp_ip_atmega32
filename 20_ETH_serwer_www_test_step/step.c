@@ -12,9 +12,6 @@
 #include <util/delay.h>
 #include "step.h"
 
-
-
-extern volatile uint8_t ms2_flag;
 uint8_t start_stepper = 0;
 uint8_t steps_state = 0;
 uint8_t steps_received = 0;
