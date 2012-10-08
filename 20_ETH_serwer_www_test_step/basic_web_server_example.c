@@ -104,7 +104,7 @@ int8_t analyse_get_url(char *str)
                   		if(steps_state < 0){
                   			oversteps = (steps_state*-1) % STEPS;
                   			steps_state = 0;
-                  			steps_todo = steps_received + oversteps;
+                  			steps_todo = steps_received - oversteps;
                   		}
                       	else{
                       		steps_todo = steps_received;
