@@ -26,6 +26,8 @@
 #include "step.h"
 #include "websrv_help_functions.h"
 
+//LCD INCLUDE
+#include "lcd44780.h"
 
 
 /*STEPPER VARIABLES*/
@@ -84,13 +86,25 @@ int8_t analyse_get_url(char *str)
         if (steps_cmd==2){
                 	if(find_key_val(str, gStrbuf,5,"ox")){
                 		steps_received = atoi(gStrbuf);
-                		steps_state += (steps_received + 1);
+                		steps_state += steps_received;
                 		left_dir = 1;
                 		right_dir = 0;
+                		lcd_locate(0,0);
+                		lcd_str_P( PSTR("rec:") );
+                		lcd_int(steps_received);
+                		lcd_locate(0,8);
+                		lcd_str_P( PSTR("sta:") );
+                		lcd_int(steps_state);
                 		if(steps_state > STEPS){
                 			oversteps = steps_state % STEPS;
+                			lcd_locate(1,0);
+                			lcd_str_P( PSTR("over:") );
+                			lcd_int(oversteps);
                 			steps_state = STEPS - 1;
                 			steps_todo = steps_received - oversteps;
+                			lcd_locate(1,8);
+                			lcd_str_P( PSTR("todo:") );
+                			lcd_int(steps_todo);
                 		}
                 		else{
                 			steps_todo = steps_received;
@@ -160,6 +174,13 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
 
 
 int main(void){
+
+	/*LCD INIT SECTION*/
+		DDRA |= (1<<PA0);
+		PORTA |= (1<<PA0);
+		lcd_init();
+		lcd_str_P( PSTR("LCD INIT OK!") );
+
 /* ustawienie TIMER0 dla F_CPU=16MHz */
 		TCCR0 |= (1<<WGM01);				/* tryb CTC */
 		TCCR0 |= (1<<CS02)|(1<<CS00);		/* preskaler = 1024 */
