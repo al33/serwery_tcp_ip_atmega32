@@ -96,7 +96,8 @@ int8_t analyse_get_url(char *str)
                 		lcd_str_P( PSTR("sta:") );
                 		lcd_int(steps_state);
                 		if(steps_state > STEPS){
-                			oversteps = steps_state % STEPS;
+                			//oversteps = steps_state % STEPS;
+                			oversteps = (steps_state - STEPS)*(steps_state/STEPS);
                 			lcd_locate(1,0);
                 			lcd_str_P( PSTR("over:") );
                 			lcd_int(oversteps);
@@ -122,7 +123,8 @@ int8_t analyse_get_url(char *str)
                 		lcd_str_P( PSTR("sta:") );
                 		lcd_int(steps_state);
                   		if(steps_state < 0){
-                  			oversteps = (steps_state*-1) % STEPS;
+                  			//oversteps = (steps_state*-1) % STEPS;
+                  			oversteps = ((steps_state*-1) - STEPS)*((steps_state*-1)/STEPS);
                   			lcd_locate(1,0);
                   			lcd_str_P( PSTR("over:") );
                   			lcd_int(oversteps);
