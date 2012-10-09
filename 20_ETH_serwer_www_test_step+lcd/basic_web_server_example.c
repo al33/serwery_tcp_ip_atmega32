@@ -96,6 +96,7 @@ int8_t analyse_get_url(char *str)
                 		lcd_str_P( PSTR("sta:") );
                 		lcd_int(steps_state);
                 		if(steps_state > STEPS){
+                			PORTD|= (1<<PORTD7);
                 			//oversteps = steps_state % STEPS;
                 			oversteps = (steps_state - STEPS)*(steps_state/STEPS);
                 			lcd_locate(1,0);
@@ -104,8 +105,8 @@ int8_t analyse_get_url(char *str)
                 			steps_state = STEPS - 1;
                 			steps_todo = steps_received - oversteps;
                 			lcd_locate(1,8);
-                			lcd_str_P( PSTR("todo:") );
-                			lcd_int(steps_todo);
+                			lcd_str_P( PSTR("sta:") );
+                			lcd_int(steps_state);
                 		}
                 		else{
                 			steps_todo = steps_received;
