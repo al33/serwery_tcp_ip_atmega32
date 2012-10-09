@@ -90,7 +90,7 @@ int8_t analyse_get_url(char *str)
                 		left_dir = 1;
                 		right_dir = 0;
                 		lcd_locate(0,0);
-                		lcd_str_P( PSTR("rec:") );
+                		lcd_str_P( PSTR("rcv:") );
                 		lcd_int(steps_received);
                 		lcd_locate(0,8);
                 		lcd_str_P( PSTR("sta:") );
