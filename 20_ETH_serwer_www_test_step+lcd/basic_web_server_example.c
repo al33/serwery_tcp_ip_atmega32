@@ -35,8 +35,8 @@
 volatile uint8_t ms2_flag;
 extern uint8_t steps_cmd;
 extern uint8_t start_stepper;
-extern int8_t steps_state;
-extern uint8_t steps_received;
+extern int16_t steps_state;
+extern int8_t steps_received;
 extern int8_t steps_todo;
 extern int8_t oversteps;
 extern uint8_t right_dir;
