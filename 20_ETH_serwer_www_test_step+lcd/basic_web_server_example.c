@@ -163,16 +163,14 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         plen=http200ok();
         plen=fill_tcp_data_p(buf,plen,PSTR("<pre>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<font color='green' size='6'><b>Witaj !</b>\n</font>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("<font color='blue'><i>twój serwer www dzia³a znakomicie</i>\n\n</font>"));
+        //plen=fill_tcp_data_p(buf,plen,PSTR("<font color='blue'><i>twój serwer www dzia³a znakomicie</i>\n\n</font>"));
         if(on){
                	   plen=fill_tcp_data_p(buf,plen,PSTR(" <font color=#00FF00>ON</font>"));
                    plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=0\">[switch off]</a>\n"));
-                   plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=0\">Moj_off</a>\n"));
               }
         else{
                    plen=fill_tcp_data_p(buf,plen,PSTR("OFF"));
                    plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=1\">[switch on]</a>\n"));
-                   plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=1\">Moj_on</a>\n"));
             }
 
         /*STEPPER*/
@@ -184,7 +182,7 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
                    plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<input type=hidden name=sw value=2>\nRIGHT<input size=20 type=text name=oy>\n<br>"));
                    plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE RIGHT\"></form>\n"));
 
-                   plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=3\">TURN OFF STEPPER</a>\n"));
+                   //plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=3\">TURN OFF STEPPER</a>\n"));
 
 
         plen=fill_tcp_data_p(buf,plen,PSTR("\n<a href=\".\">[refresh status]</a>\n"));
