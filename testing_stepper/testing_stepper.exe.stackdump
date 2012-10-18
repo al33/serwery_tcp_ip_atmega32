@@ -1,0 +1,11 @@
+Exception: STATUS_ACCESS_VIOLATION at eip=6113CC8D
+eax=00000000 ebx=61183630 ecx=0028CC68 edx=00000001 esi=00000000 edi=00000001
+ebp=0028CC38 esp=0028B6E0 program=C:\Users\Robert\Documents\NetBeansProjects\testing_stepper\dist\Debug\Cygwin-Windows\testing_stepper.exe, pid 5692, thread main
+cs=0023 ds=002B es=002B fs=0053 gs=002B ss=002B
+Stack trace:
+Frame     Function  Args
+0028CC38  6113CC8D  (0028D000, 61183630, 0040203F, 0028CC68)
+0028CC58  61137D2E  (0040203F, 00000000, 20010100, 004010B5)
+0028CC98  610D34A5  (00000001, 0028CCC0, 20010100, 612773BA)
+0028CD28  61006F58  (00000000, 0028CD78, 61006550, 00000000)
+End of stack trace
