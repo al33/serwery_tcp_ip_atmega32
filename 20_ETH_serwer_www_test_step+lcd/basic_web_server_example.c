@@ -89,24 +89,24 @@ int8_t analyse_get_url(char *str)
                 		steps_state += steps_received;
                 		left_dir = 1;
                 		right_dir = 0;
-                		lcd_locate(0,0);
-                		lcd_str_P( PSTR("rec:") );
-                		lcd_int(steps_received);
-                		lcd_locate(0,8);
-                		lcd_str_P( PSTR("sta:") );
-                		lcd_int(steps_state);
+                		//lcd_locate(0,0);
+                		//lcd_str_P( PSTR("rec:") );
+                		//lcd_int(steps_received);
+                		//lcd_locate(0,8);
+                		//lcd_str_P( PSTR("sta:") );
+                		//lcd_int(steps_state);
                 		if(steps_state > STEPS){
-                			PORTD|= (1<<PORTD7);
+                			//PORTD|= (1<<PORTD7);
                 			oversteps = steps_state % STEPS;
-                			oversteps = (steps_state - STEPS)*(steps_state/STEPS);
-                			lcd_locate(1,0);
-                			lcd_str_P( PSTR("over:") );
-                			lcd_int(oversteps);
-                			steps_state = STEPS - 1;
+                			//oversteps = (steps_state - STEPS)*(steps_state/STEPS);
+                			//lcd_locate(1,0);
+                			//lcd_str_P( PSTR("over:") );
+                			//lcd_int(oversteps);
+                			steps_state = STEPS;
                 			steps_todo = steps_received - oversteps;
-                			lcd_locate(1,8);
-                			lcd_str_P( PSTR("todo:") );
-                			lcd_int(steps_todo);
+                			//lcd_locate(1,8);
+                			//lcd_str_P( PSTR("todo:") );
+                			//lcd_int(steps_todo);
                 		}
                 		else{
                 			steps_todo = steps_received;
@@ -257,7 +257,7 @@ int main(void){
                 		}
                 	}
                 }
-                else {
+                else{
 					silnik_stop();
 					start_stepper = 0;
 				}
