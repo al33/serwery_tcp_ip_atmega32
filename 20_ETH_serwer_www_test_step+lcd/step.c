@@ -14,9 +14,9 @@
 
 uint8_t start_stepper = 0;
 int16_t steps_state = 0;
-int8_t steps_received = 0;
-int8_t steps_todo = 0;
-int8_t oversteps = 0;
+int16_t steps_received = 0;
+int16_t steps_todo = 0;
+int16_t oversteps = 0;
 uint8_t steps_cmd = 0;
 uint8_t right_dir = 0;
 uint8_t left_dir = 0;
