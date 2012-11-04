@@ -46,6 +46,10 @@ extern uint8_t right_dir;
 extern uint8_t left_dir;
 /*END OF STEPPER VARIABLES*/
 
+volatile uint8_t s1_flag;	/* flaga tykniêcia timera co 1 sekundê */
+volatile uint8_t sekundy;	/* licznik sekund 0-59 */
+volatile uint16_t ms2_cnt;
+
 
 // ustalamy adres MAC
 static uint8_t mymac[6] = {0x00,0x55,0x58,0x10,0x00,0x29};
@@ -92,31 +96,60 @@ int8_t analyse_get_url(char *str)
                 		steps_state += steps_received;
                 		left_dir = 1;
                 		right_dir = 0;
-                		//lcd_locate(0,0);
-                		//lcd_str_P( PSTR("rec:") );
-                		//lcd_int(steps_received);
-                		//lcd_locate(0,8);
-                		//lcd_str_P( PSTR("sta:") );
-                		//lcd_int(steps_state);
-                		if(steps_state > STEPS){
-                			//PORTD|= (1<<PORTD7);
+                		/*lcd_locate(0,0);
+                		lcd_str_P( PSTR("rec:") );
+                		lcd_int(steps_received);
+                		lcd_locate(0,8);
+                		lcd_str_P( PSTR("sta:") );
+                		lcd_int(steps_state);*/
+
+                		uart_puts("ox rec, state: ");
+                		uart_putint(steps_received, 10);
+                		uart_putc(',');
+                		uart_putint(steps_state, 10);
+                        uart_putc('\r');
+                        uart_putc('\n');
+
+                        if(steps_state > STEPS){
                 			oversteps = steps_state % STEPS;
                 			//oversteps = (steps_state - STEPS)*(steps_state/STEPS);
-                			//lcd_locate(1,0);
-                			//lcd_str_P( PSTR("over:") );
-                			//lcd_int(oversteps);
+                			/*lcd_locate(1,0);
+                			lcd_str_P( PSTR("over:") );
+                			lcd_int(oversteps);*/
+
+                			uart_puts("ox oversteps: ");
+                			uart_putint(oversteps, 10);
+                	        uart_putc('\r');
+                	        uart_putc('\n');
+
                 			steps_state = STEPS;
                 			steps_todo = steps_received - oversteps;
-                			//lcd_locate(1,8);
-                			//lcd_str_P( PSTR("todo:") );
-                			//lcd_int(steps_todo);
+
+                			uart_puts("ox todo: ");
+                			uart_putint(steps_todo, 10);
+                	        uart_putc('\r');
+                	        uart_putc('\n');
+
+                			/*lcd_locate(1,8);
+                			lcd_str_P( PSTR("todo:") );
+                			lcd_int(steps_todo);*/
                 		}
                 		else{
                 			steps_todo = steps_received;
+
+                			uart_puts("ox todo: ");
+                			uart_putint(steps_todo, 10);
+                			uart_putc('\r');
+                			uart_putc('\n');
                 		}
                 	}
                 	if(find_key_val(str, gStrbuf,5,"oy")){
                 		steps_received = atoi(gStrbuf);
+
+                		uart_puts("oy rec: ");
+                		uart_putint(steps_received, 10);
+                		uart_putc('\r');
+                		uart_putc('\n');
 
                 		if(steps_state > 100){
                 			steps_state = STEPS;
@@ -126,6 +159,12 @@ int8_t analyse_get_url(char *str)
                 		steps_state -= steps_received;
                 		right_dir = 1;
                 		left_dir = 0;
+
+                		uart_puts("oy state: ");
+                		uart_putint(steps_state, 10);
+                		uart_putc('\r');
+                		uart_putc('\n');
+
                 		/*lcd_locate(0,0);
                 		lcd_str_P( PSTR("rec:") );
                 		lcd_int(steps_received);
@@ -135,17 +174,33 @@ int8_t analyse_get_url(char *str)
                   		if(steps_state < 0){
                   			oversteps = (steps_state*-1) % STEPS;
                   			//oversteps = ((steps_state*-1) - STEPS)*((steps_state*-1)/STEPS);
-                  			//lcd_locate(1,0);
-                  			//lcd_str_P( PSTR("over:") );
-                  			//lcd_int(oversteps);
+                  			/*lcd_locate(1,0);
+                  			lcd_str_P( PSTR("over:") );
+                  			lcd_int(oversteps);*/
+
+                  			uart_puts("oy oversteps: ");
+                  			uart_putint(oversteps, 10);
+                  			uart_putc('\r');
+                  			uart_putc('\n');
+
                   			steps_state = 0;
                   			steps_todo = steps_received - oversteps;
-                  			//lcd_locate(1,8);
-                  			//lcd_str_P( PSTR("todo:") );
-                  			//lcd_int(steps_todo);
+
+                  			uart_puts("oy todo: ");
+                  			uart_putint(steps_todo, 10);
+                  			uart_putc('\r');
+                  			uart_putc('\n');
+
+                  			/*lcd_locate(1,8);
+                  			lcd_str_P( PSTR("todo:") );
+                  			lcd_int(steps_todo);*/
                   		}
                       	else{
                       		steps_todo = steps_received;
+                      		uart_puts("oy todo: ");
+                      		uart_putint(steps_todo, 10);
+                      		uart_putc('\r');
+                      		uart_putc('\n');
                        	}
                 	}
                 	return(2);
@@ -237,6 +292,12 @@ int main(void){
         uart_putc('\n');
 
         while(1){
+
+        	if(s1_flag){
+        		uart_putc('.');
+        		s1_flag = 0;
+        	}
+
         	//if(ms2_flag){				//krecenie motorkiem bez przerwy
         		//kroki_lewo();
         		//ms2_flag=0;
@@ -338,5 +399,12 @@ SENDTCP:
 /* pe³ni funkcjê timera programowego wyznaczaj¹cego podstawê czasu = 2,5ms */
 ISR(TIMER0_COMP_vect){
 		ms2_flag = 1;	/* ustawiamy flagê co 2,5ms */
+
+		if(++ms2_cnt>399) {	/* gdy licznik ms > 499 (minê³a 1 sekunda) */
+				s1_flag=1;	/* ustaw flagê tykniêcia sekundy */
+				sekundy++;	/* zwiêksz licznik sekund */
+				if(sekundy>59) sekundy=0; /* jeœli iloœæ sekund > 59 - wyzeruj */
+				ms2_cnt=0;	/* wyzeruj licznik setnych ms */
+			}
 	}
 
