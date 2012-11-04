@@ -29,6 +29,9 @@
 //LCD INCLUDE
 #include "lcd44780.h"
 
+//RS232 INCLUDE
+#include "MKUART/mkuart.h"
+
 
 /*STEPPER VARIABLES*/
 #define STEPS 100
@@ -194,6 +197,9 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
 
 int main(void){
 
+	/*RS232 INIT SECTION*/
+	USART_Init( __UBRR );
+
 	/*LCD INIT SECTION*/
 		DDRA |= (1<<PA0);
 		PORTA |= (1<<PA0);
@@ -207,7 +213,6 @@ int main(void){
 		TIMSK |= (1<<OCIE0);				/* zezwolenie na przerwanie CompareMatch */
 /* przerwanie wykonywane z czêstotliwoœci¹ ok 2,5ms (400 razy na sekundê) */
 
-		sei();
         uint16_t dat_p;
         uint8_t cmd;
         uint16_t plen;
@@ -226,6 +231,10 @@ int main(void){
         init_ip_arp_udp_tcp(mymac,myip,MYWWWPORT);
 
         sei();
+
+        uart_puts("RS232 OK!");
+        uart_putc('\r');
+        uart_putc('\n');
 
         while(1){
         	//if(ms2_flag){				//krecenie motorkiem bez przerwy
