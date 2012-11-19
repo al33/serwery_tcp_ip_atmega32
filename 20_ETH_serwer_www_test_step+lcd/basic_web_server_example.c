@@ -277,7 +277,7 @@ int main(void){
 		//przerwanie wykonywane z czêstotliwoœci¹ ok 2,5ms (400 razy na sekundê)
 
         uint16_t dat_p;
-        uint8_t cmd;
+        int8_t cmd;
         uint16_t plen;
 
         silnik_stop();
