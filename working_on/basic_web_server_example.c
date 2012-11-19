@@ -214,6 +214,12 @@ uint16_t http200ok(void)
         return(fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: text/html\r\nPragma: no-cache\r\n\r\n")));
 }
 
+uint16_t http200okjs(void)
+{
+        return(fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n")));
+}
+
+
 // prepare the webpage by writing the data to the tcp send buffer
 uint16_t print_webpage(uint8_t *buf, uint8_t on)
 {
@@ -221,7 +227,6 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         plen=http200ok();
         plen=fill_tcp_data_p(buf,plen,PSTR("<pre>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<font color='green' size='6'><b>Witaj !</b>\n</font>"));
-        //plen=fill_tcp_data_p(buf,plen,PSTR("<font color='blue'><i>twój serwer www dzia³a znakomicie</i>\n\n</font>"));
         if(on){
                	   plen=fill_tcp_data_p(buf,plen,PSTR(" <font color=#00FF00>ON</font>"));
                    plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=0\">[switch off]</a>\n"));
@@ -231,7 +236,7 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
                    plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=1\">[switch on]</a>\n"));
             }
 
-        /*STEPPER*/
+        /*STEPPER
                    plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form METHOD=get action=\""));
                    plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<input type=hidden name=sw value=2>\nLEFT<input size=20 type=text name=ox>\n<br>"));
                    plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE LEFT\"></form>\n"));
@@ -239,8 +244,15 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
                    plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form METHOD=get action=\""));
                    plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<input type=hidden name=sw value=2>\nRIGHT<input size=20 type=text name=oy>\n<br>"));
                    plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE RIGHT\"></form>\n"));
-
-                   //plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=3\">TURN OFF STEPPER</a>\n"));
+*/
+        //STEPPER + JS
+        plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form method=get action=\""));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\">\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=sw min=\"0\" max=\"100\" value=\"0\" step=\"5\" onchange=\"showValue(this.value, 'rangeH')\"/>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\"><span id=rangeH>0</span>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("<script type=text/javascript>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("function showValue(newValue, target){document.getElementById(target).innerHTML=newValue;}"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("</script>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE RIGHT\"></form>\n"));
 
 
         plen=fill_tcp_data_p(buf,plen,PSTR("\n<a href=\".\">[refresh status]</a>\n"));
