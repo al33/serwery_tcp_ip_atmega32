@@ -247,12 +247,13 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
 */
         //STEPPER + JS
         plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form method=get action=\""));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\">\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=sw min=\"0\" max=\"100\" value=\"0\" step=\"5\" onchange=\"showValue(this.value, 'rangeH')\"/>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\"><input type=hidden name=sw value=2>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\">\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" value=\"0\" step=\"5\" onchange=\"showValue(this.value, 'rangeH')\"/>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("\"><span id=rangeH>0</span>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<script type=text/javascript>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("function showValue(newValue, target){document.getElementById(target).innerHTML=newValue;}"));
         plen=fill_tcp_data_p(buf,plen,PSTR("</script>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE RIGHT\"></form>\n"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE STEPPER\"></form>\n"));
 
 
         plen=fill_tcp_data_p(buf,plen,PSTR("\n<a href=\".\">[refresh status]</a>\n"));
