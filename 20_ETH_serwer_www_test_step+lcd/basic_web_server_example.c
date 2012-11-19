@@ -261,12 +261,20 @@ int main(void){
 		lcd_init();
 		lcd_str_P( PSTR("LCD INIT OK!") );
 
-/* ustawienie TIMER0 dla F_CPU=16MHz */
-		TCCR0 |= (1<<WGM01);				/* tryb CTC */
-		TCCR0 |= (1<<CS02)|(1<<CS00);		/* preskaler = 1024 */
+/*
+ ustawienie TIMER0 dla F_CPU=16MHz
+		TCCR0 |= (1<<WGM01);				 tryb CTC
+		TCCR0 |= (1<<CS02)|(1<<CS00);		 preskaler = 1024
 		OCR0 = 39;							//przepelnienie dla 400Hz IDEANE KROKI!
-		TIMSK |= (1<<OCIE0);				/* zezwolenie na przerwanie CompareMatch */
-/* przerwanie wykonywane z czêstotliwoœci¹ ok 2,5ms (400 razy na sekundê) */
+		TIMSK |= (1<<OCIE0);				 zezwolenie na przerwanie CompareMatch
+ przerwanie wykonywane z czêstotliwoœci¹ ok 2,5ms (400 razy na sekundê)
+*/
+		//ustawienie TIMER0 dla F_CPU=20MHz
+		TCCR0 |= (1<<WGM01);				 //tryb CTC
+		TCCR0 |= (1<<CS02)|(1<<CS00);		 //preskaler = 1024
+		OCR0 = 48;							//przepelnienie dla 400Hz IDEANE KROKI!
+		TIMSK |= (1<<OCIE0);				 //zezwolenie na przerwanie CompareMatch
+		//przerwanie wykonywane z czêstotliwoœci¹ ok 2,5ms (400 razy na sekundê)
 
         uint16_t dat_p;
         uint8_t cmd;
