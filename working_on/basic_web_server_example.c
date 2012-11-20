@@ -93,115 +93,25 @@ int8_t analyse_get_url(char *str)
         if (steps_cmd==2){
                 	if(find_key_val(str, gStrbuf,5,"ox")){
                 		steps_received = atoi(gStrbuf);
-                		steps_state += steps_received;
-                		left_dir = 1;
-                		right_dir = 0;
-                		/*lcd_locate(0,0);
-                		lcd_str_P( PSTR("rec:") );
-                		lcd_int(steps_received);
-                		lcd_locate(0,8);
-                		lcd_str_P( PSTR("sta:") );
-                		lcd_int(steps_state);*/
-
-                		uart_puts("ox rec, state: ");
-                		uart_putint(steps_received, 10);
-                		uart_putc(',');
-                		uart_putint(steps_state, 10);
-                        uart_putc('\r');
-                        uart_putc('\n');
-
-                        if(steps_state > STEPS){
-                			oversteps = steps_state % STEPS;
-                			//oversteps = (steps_state - STEPS)*(steps_state/STEPS);
-                			/*lcd_locate(1,0);
-                			lcd_str_P( PSTR("over:") );
-                			lcd_int(oversteps);*/
-
-                			uart_puts("ox oversteps: ");
-                			uart_putint(oversteps, 10);
-                	        uart_putc('\r');
-                	        uart_putc('\n');
-
-                			steps_state = STEPS;
-                			steps_todo = steps_received - oversteps;
-
-                			uart_puts("ox todo: ");
-                			uart_putint(steps_todo, 10);
-                	        uart_putc('\r');
-                	        uart_putc('\n');
-
-                			/*lcd_locate(1,8);
-                			lcd_str_P( PSTR("todo:") );
-                			lcd_int(steps_todo);*/
+                		if(steps_state > steps_received){
+                			left_dir = 1;
+                			right_dir = 0;
+                			steps_todo = (steps_state - steps_received);
+                			steps_state = steps_received;
                 		}
-                		else{
-                			steps_todo = steps_received;
-
-                			uart_puts("ox todo: ");
-                			uart_putint(steps_todo, 10);
-                			uart_putc('\r');
-                			uart_putc('\n');
+                		else if(steps_received > steps_state){
+                			left_dir = 0;
+                			right_dir = 1;
+                		    steps_todo = (steps_received - steps_state);
+                		    steps_state = steps_received;
                 		}
+
                 	}
+
                 	if(find_key_val(str, gStrbuf,5,"oy")){
                 		steps_received = atoi(gStrbuf);
 
-                		uart_puts("oy rec: ");
-                		uart_putint(steps_received, 10);
-                		uart_putc('\r');
-                		uart_putc('\n');
 
-                		if(steps_state > 100){
-                			steps_state = STEPS;
-                		}
-
-
-                		steps_state -= steps_received;
-                		right_dir = 1;
-                		left_dir = 0;
-
-                		uart_puts("oy state: ");
-                		uart_putint(steps_state, 10);
-                		uart_putc('\r');
-                		uart_putc('\n');
-
-                		/*lcd_locate(0,0);
-                		lcd_str_P( PSTR("rec:") );
-                		lcd_int(steps_received);
-                		lcd_locate(0,8);
-                		lcd_str_P( PSTR("sta:") );
-                		lcd_int(steps_state);*/
-                  		if(steps_state < 0){
-                  			oversteps = (steps_state*-1) % STEPS;
-                  			//oversteps = ((steps_state*-1) - STEPS)*((steps_state*-1)/STEPS);
-                  			/*lcd_locate(1,0);
-                  			lcd_str_P( PSTR("over:") );
-                  			lcd_int(oversteps);*/
-
-                  			uart_puts("oy oversteps: ");
-                  			uart_putint(oversteps, 10);
-                  			uart_putc('\r');
-                  			uart_putc('\n');
-
-                  			steps_state = 0;
-                  			steps_todo = steps_received - oversteps;
-
-                  			uart_puts("oy todo: ");
-                  			uart_putint(steps_todo, 10);
-                  			uart_putc('\r');
-                  			uart_putc('\n');
-
-                  			/*lcd_locate(1,8);
-                  			lcd_str_P( PSTR("todo:") );
-                  			lcd_int(steps_todo);*/
-                  		}
-                      	else{
-                      		steps_todo = steps_received;
-                      		uart_puts("oy todo: ");
-                      		uart_putint(steps_todo, 10);
-                      		uart_putc('\r');
-                      		uart_putc('\n');
-                       	}
                 	}
                 	return(2);
         }
@@ -214,10 +124,10 @@ uint16_t http200ok(void)
         return(fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: text/html\r\nPragma: no-cache\r\n\r\n")));
 }
 
-uint16_t http200okjs(void)
+/*uint16_t http200okjs(void)
 {
         return(fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n")));
-}
+}*/
 
 
 // prepare the webpage by writing the data to the tcp send buffer
@@ -248,7 +158,7 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //STEPPER + JS
         plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form method=get action=\""));
         plen=fill_tcp_data_p(buf,plen,PSTR("\"><input type=hidden name=sw value=2>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\">\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" value=\"0\" step=\"5\" onchange=\"showValue(this.value, 'rangeH')\"/>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\">\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value, 'rangeH')\"/>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("\"><span id=rangeH>0</span>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<script type=text/javascript>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("function showValue(newValue, target){document.getElementById(target).innerHTML=newValue;}"));
