@@ -38,12 +38,13 @@
 volatile uint8_t ms2_flag;
 extern uint8_t steps_cmd;
 extern uint8_t start_stepper;
-extern int16_t steps_state;
-extern int16_t steps_received;
-extern int16_t steps_todo;
-extern int16_t oversteps;
+extern uint8_t steps_state;
+extern uint8_t steps_received;
+extern uint8_t steps_todo;
 extern uint8_t right_dir;
 extern uint8_t left_dir;
+extern uint8_t up_dir;
+extern uint8_t down_dir;
 /*END OF STEPPER VARIABLES*/
 
 volatile uint8_t s1_flag;	/* flaga tykniêcia timera co 1 sekundê */
@@ -91,6 +92,7 @@ int8_t analyse_get_url(char *str)
         }
         //STEP SETTINGS
         if (steps_cmd==2){
+        	//Krecenie po osi OX
                 	if(find_key_val(str, gStrbuf,5,"ox")){
                 		steps_received = atoi(gStrbuf);
                 		if(steps_state > steps_received){
@@ -107,10 +109,21 @@ int8_t analyse_get_url(char *str)
                 		}
 
                 	}
-
+            //Krecenie po osi OY
                 	if(find_key_val(str, gStrbuf,5,"oy")){
                 		steps_received = atoi(gStrbuf);
-
+                		if(steps_state > steps_received){
+                			down_dir = 1;
+                			up_dir = 0;
+                			steps_todo = (steps_state - steps_received);
+                			steps_state = steps_received;
+                		}
+                		else if(steps_received > steps_state){
+                			down_dir = 0;
+                			up_dir = 1;
+                			steps_todo = (steps_received - steps_state);
+                			steps_state = steps_received;
+                		}
 
                 	}
                 	return(2);
@@ -155,7 +168,7 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
                    plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<input type=hidden name=sw value=2>\nRIGHT<input size=20 type=text name=oy>\n<br>"));
                    plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE RIGHT\"></form>\n"));
 */
-        //STEPPER + JS
+        //STEPPER + JS OX
         plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form method=get action=\""));
         plen=fill_tcp_data_p(buf,plen,PSTR("\"><input type=hidden name=sw value=2>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("\">\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value, 'rangeH')\"/>"));
@@ -163,9 +176,18 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         plen=fill_tcp_data_p(buf,plen,PSTR("<script type=text/javascript>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("function showValue(newValue, target){document.getElementById(target).innerHTML=newValue;}"));
         plen=fill_tcp_data_p(buf,plen,PSTR("</script>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE STEPPER\"></form>\n"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE STEPPER OX\"></form>\n"));
 
-
+        //STEPPER + JS OY
+        /*plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form method=get action=\""));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\"><input type=hidden name=sw value=2>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\">\nSTEPS Vertical: <input type=range class=\"sliderV\" name=oy min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value, 'rangeV')\"/>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\"><span id=rangeV>0</span>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("<script type=text/javascript>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("function showValue(newValue, target){document.getElementById(target).innerHTML=newValue;}"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("</script>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE STEPPER OY\"></form>\n"));
+*/
         plen=fill_tcp_data_p(buf,plen,PSTR("\n<a href=\".\">[refresh status]</a>\n"));
         plen=fill_tcp_data_p(buf,plen,PSTR("</pre>\n"));
         return(plen);
@@ -255,6 +277,20 @@ int main(void){
                 			kroki_prawo();
                 			steps_todo --;
                 		    ms2_flag=0;
+                		}
+                	}
+                	if(down_dir){
+                		if(ms2_flag){
+                			kroki_dol();
+                			steps_todo --;
+                			ms2_flag=0;
+                		}
+                	}
+                	if(up_dir){
+                		if(ms2_flag){
+                			kroki_gora();
+                			steps_todo --;
+                			ms2_flag=0;
                 		}
                 	}
                 }
