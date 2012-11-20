@@ -29,19 +29,22 @@ enum edir dir = lewo;
 void silnik_stop(void);
 void kroki_lewo(void);
 void kroki_prawo(void);
+void kroki_gora(void);
+void kroki_dol(void);
 
 	void silnik_stop(void) {
 		PORTD &= ~(A1|A2|B1|B2);
+		PORTC &= ~(C1|C2|D1|D2)
 	}
 
 	/* funkcja wykonuj¹ca cyklicznie kroki (obrót w lewo) */
 	void kroki_lewo(void) {
 		static uint8_t kr;
 
-		if( kr == 0 ) { KROK1; }
-		if( kr == 1 ) { KROK2; }
-		if( kr == 2 ) { KROK3; }
-		if( kr == 3 ) { KROK4; }
+		if( kr == 0 ) { KROK1H; }
+		if( kr == 1 ) { KROK2H; }
+		if( kr == 2 ) { KROK3H; }
+		if( kr == 3 ) { KROK4H; }
 
 		if( ++kr > 3 ) kr=0;
 	}
@@ -50,10 +53,35 @@ void kroki_prawo(void);
 	void kroki_prawo(void) {
 		static uint8_t kr;
 
-		if( kr == 0 ) { KROK4; }
-		if( kr == 1 ) { KROK3; }
-		if( kr == 2 ) { KROK2; }
-		if( kr == 3 ) { KROK1; }
+		if( kr == 0 ) { KROK4H; }
+		if( kr == 1 ) { KROK3H; }
+		if( kr == 2 ) { KROK2H; }
+		if( kr == 3 ) { KROK1H; }
 
 		if( ++kr > 3 ) kr=0;
 	}
+
+	/* funkcja wykonuj¹ca cyklicznie kroki (obrót w gore) */
+		void kroki_gora(void) {
+			static uint8_t kr;
+
+			if( kr == 0 ) { KROK1V; }
+			if( kr == 1 ) { KROK2V; }
+			if( kr == 2 ) { KROK3V; }
+			if( kr == 3 ) { KROK4V; }
+
+			if( ++kr > 3 ) kr=0;
+		}
+
+		/* funkcja wykonuj¹ca cyklicznie kroki (obrót w dol) */
+		void kroki_dol(void) {
+			static uint8_t kr;
+
+			if( kr == 0 ) { KROK4V; }
+			if( kr == 1 ) { KROK3V; }
+			if( kr == 2 ) { KROK2V; }
+			if( kr == 3 ) { KROK1V; }
+
+			if( ++kr > 3 ) kr=0;
+		}
+
