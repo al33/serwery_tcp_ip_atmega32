@@ -68,7 +68,7 @@ static char gStrbuf[25];
 int8_t analyse_get_url(char *str)
 {
 
-    if (strncmp("slider.js",str,8)==0){
+    if (strncmp("slider.js",str,9)==0){
             return(10);
     }
         //uint8_t loop=15;
@@ -138,7 +138,7 @@ int8_t analyse_get_url(char *str)
 
 uint16_t http200ok(void)
 {
-        return(fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: text/html, application/x-javascript\r\nPragma: no-cache\r\n\r\n")));
+        return(fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: text/html\r\nPragma: no-cache\r\n\r\n")));
 }
 
 uint16_t http200okjs(void)
@@ -150,8 +150,8 @@ uint16_t http200okjs(void)
 uint16_t print_js(void)
 {
 	uint16_t plen;
-	plen = http200okjs();
-	//plen = fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n"));
+	//plen = http200okjs();
+	plen = fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n"));
 	plen = fill_tcp_data_p(buf, plen, PSTR("function showValue(e,t){document.getElementById(t).innerHTML=e}"));
 	return(plen);
 }
@@ -329,15 +329,16 @@ int main(void){
                         // head, post and other methods:
                 		//plen=http200okjs();
                 		plen=http200ok();
-                		plen=print_js();
-                        //plen=fill_tcp_data_p(buf,plen,PSTR("<h1>200 OK</h1>"));
+                		//plen = fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n"));
+                		//plen=print_js();
+                        plen=fill_tcp_data_p(buf,plen,PSTR("<h1>200 OK</h1>"));
                         goto SENDTCP;
                 }
                 // just one web page in the "root directory" of the web server
                 if (strncmp("/ ",(char *)&(buf[dat_p+4]),2)==0){
                 		plen=http200ok();
                 		//plen=http200okjs();
-                		plen=print_js();
+                		//plen=print_js();
 						plen=print_webpage(buf,(PORTD & (1<<PORTD7)));
                         goto SENDTCP;
                 }
@@ -365,7 +366,8 @@ int main(void){
                                 	silnik_stop();
                                 }
                                 if (cmd==10){
-                                	fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n"));
+                                	plen=http200okjs();
+                                	//plen=fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n"));
                                 	plen=print_js();
                                 	goto SENDTCP;
                                 }
