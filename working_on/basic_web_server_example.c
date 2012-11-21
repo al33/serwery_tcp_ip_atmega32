@@ -68,11 +68,11 @@ static char gStrbuf[25];
 int8_t analyse_get_url(char *str)
 {
 
-    if (strncmp("slider.js",str,9)==0){
+/*    if (strncmp("slider.js",str,9)==0){
     	PORTD|= (1<<PORTD7);
             return(10);
 
-    }
+    }*/
         //uint8_t loop=15;
         // the first slash:
         if (*str == '/'){
@@ -80,6 +80,12 @@ int8_t analyse_get_url(char *str)
         }else{
                 return(-1);
         }
+
+        if (strncmp("slider.js",str,9)==0){
+            	PORTD|= (1<<PORTD7);
+                    return(10);
+        }
+
 
         // str is now end of ip adress
         if (find_key_val(str,gStrbuf,5,"sw")){
