@@ -13,17 +13,14 @@
 #include "step.h"
 
 uint8_t start_stepper = 0;
-int16_t steps_state = 0;
-int16_t steps_received = 0;
-int16_t steps_todo = 0;
-int16_t oversteps = 0;
+uint8_t steps_state = 0;
+uint8_t steps_received = 0;
+uint8_t steps_todo = 0;
 uint8_t steps_cmd = 0;
 uint8_t right_dir = 0;
 uint8_t left_dir = 0;
-
-
-enum edir {lewo, prawo, stop};
-enum edir dir = lewo;
+uint8_t up_dir = 0;
+uint8_t down_dir = 0;
 
 
 void silnik_stop(void);
@@ -34,7 +31,7 @@ void kroki_dol(void);
 
 	void silnik_stop(void) {
 		PORTD &= ~(A1|A2|B1|B2);
-		PORTC &= ~(C1|C2|D1|D2)
+		PORTC &= ~(C1|C2|D1|D2);
 	}
 
 	/* funkcja wykonuj¹ca cyklicznie kroki (obrót w lewo) */

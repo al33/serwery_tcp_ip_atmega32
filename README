@@ -7,17 +7,13 @@ Silnik krokowy bipolarny EM-463 5V - 100 krokow
 Sterownik silnika - L293D
 
 PRACOWAC NA:
-20_ETH_serwer_www_test_step
+working_on
 
 TODO:
 ---
 Wrzucenie obslugi silnika do przerwania? (bo gubi kroki)
 ---
-Kroki prawo i lewo o max 100
-eg.
-if(kroki_lewo = 76){
-	kroki_prawo !<76;
-}
+
 ---
 Dorobienie poruszania na osi OY
 Zakres 180 stopni (50 krokow)
@@ -31,7 +27,6 @@ Zczytywanie current_position z EEPROM przy uruchomieniu ukladu ew. ustawianie si
 ---
 Ustawienie automatycznego zapisu pozycji do EEPROM w przypadku spadku zasilania (event na INT0)
 ---
-suwaki w js do porusznia na osiach OX i OY
 ---
 Optymalizacja kodu i strony www
 ---
