@@ -69,7 +69,9 @@ int8_t analyse_get_url(char *str)
 {
 
     if (strncmp("slider.js",str,9)==0){
+    	PORTD|= (1<<PORTD7);
             return(10);
+
     }
         //uint8_t loop=15;
         // the first slash:
@@ -369,6 +371,7 @@ int main(void){
                                 	plen=http200okjs();
                                 	//plen=fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n"));
                                 	plen=print_js();
+                                	PORTD|= (1<<PORTD7);
                                 	goto SENDTCP;
                                 }
 
