@@ -67,6 +67,10 @@ static char gStrbuf[25];
 //ANALIZA URLA
 int8_t analyse_get_url(char *str)
 {
+
+    if (strncmp("slider.js",str,8)==0){
+            return(10);
+    }
         //uint8_t loop=15;
         // the first slash:
         if (*str == '/'){
@@ -134,13 +138,23 @@ int8_t analyse_get_url(char *str)
 
 uint16_t http200ok(void)
 {
-        return(fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: text/html\r\nPragma: no-cache\r\n\r\n")));
+        return(fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: text/html, application/x-javascript\r\nPragma: no-cache\r\n\r\n")));
 }
 
-/*uint16_t http200okjs(void)
+uint16_t http200okjs(void)
 {
         return(fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n")));
-}*/
+}
+
+//slider.js
+uint16_t print_js(void)
+{
+	uint16_t plen;
+	plen = http200okjs();
+	//plen = fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n"));
+	plen = fill_tcp_data_p(buf, plen, PSTR("function showValue(e,t){document.getElementById(t).innerHTML=e}"));
+	return(plen);
+}
 
 
 // prepare the webpage by writing the data to the tcp send buffer
@@ -171,11 +185,10 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //STEPPER + JS OX
         plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form method=get action=\""));
         plen=fill_tcp_data_p(buf,plen,PSTR("\"><input type=hidden name=sw value=2>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\">\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value, 'rangeH')\"/>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\">\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value,'rangeH')\"/>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("\"><span id=rangeH>0</span>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("<script type=text/javascript>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("function showValue(newValue, target){document.getElementById(target).innerHTML=newValue;}"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("</script>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\"<script src=slider.js></script>"));
+        //plen=fill_tcp_data_p(buf,plen,PSTR("function showValue(e,t){document.getElementById(t).innerHTML=e}"));
         plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE STEPPER OX\"></form>\n"));
 
         //STEPPER + JS OY
@@ -314,13 +327,17 @@ int main(void){
                 // tcp port 80 begin
                 if (strncmp("GET ",(char *)&(buf[dat_p]),4)!=0){
                         // head, post and other methods:
-                        plen=http200ok();
-                        plen=fill_tcp_data_p(buf,plen,PSTR("<h1>200 OK</h1>"));
+                		//plen=http200okjs();
+                		plen=http200ok();
+                		plen=print_js();
+                        //plen=fill_tcp_data_p(buf,plen,PSTR("<h1>200 OK</h1>"));
                         goto SENDTCP;
                 }
                 // just one web page in the "root directory" of the web server
                 if (strncmp("/ ",(char *)&(buf[dat_p+4]),2)==0){
                 		plen=http200ok();
+                		//plen=http200okjs();
+                		plen=print_js();
 						plen=print_webpage(buf,(PORTD & (1<<PORTD7)));
                         goto SENDTCP;
                 }
@@ -346,6 +363,11 @@ int main(void){
                                 {
                                 	start_stepper = 0;
                                 	silnik_stop();
+                                }
+                                if (cmd==10){
+                                	fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n"));
+                                	plen=print_js();
+                                	goto SENDTCP;
                                 }
 
                                 // if (cmd==-2) or any other value
