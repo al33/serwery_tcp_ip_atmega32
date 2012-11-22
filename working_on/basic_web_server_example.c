@@ -47,7 +47,7 @@ volatile uint16_t ms2_cnt;
 // ustalamy adres MAC
 static uint8_t mymac[6] = {0x00,0x55,0x58,0x10,0x00,0x29};
 // ustalamy adres IP urz¹dzenia
-static uint8_t myip[4] = {192,168,0,110};
+static uint8_t myip[4] = {192,168,1,110};
 
 // server listen port for www
 #define MYWWWPORT 80
