@@ -26,10 +26,6 @@
 #include "step.h"
 #include "websrv_help_functions.h"
 
-//RS232 INCLUDE
-#include "MKUART/mkuart.h"
-
-
 /*STEPPER VARIABLES*/
 volatile uint8_t ms2_flag;
 extern uint8_t steps_cmd;
@@ -159,6 +155,7 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
 {
         uint16_t plen;
         char test[200];
+        //char html[700];
         plen=http200ok();
         plen=fill_tcp_data_p(buf,plen,PSTR("<pre>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<font color='green' size='6'><b>Witaj !</b>\n</font>"));
@@ -170,7 +167,6 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
                    plen=fill_tcp_data_p(buf,plen,PSTR("OFF"));
                    plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=1\">[switch on]</a>\n"));
             }
-
         /*STEPPER
                    plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form METHOD=get action=\""));
                    plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<input type=hidden name=sw value=2>\nLEFT<input size=20 type=text name=ox>\n<br>"));
@@ -205,6 +201,10 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
 */
         plen=fill_tcp_data_p(buf,plen,PSTR("\n<a href=\".\">[refresh status]</a>\n"));
         plen=fill_tcp_data_p(buf,plen,PSTR("</pre>\n"));
+
+        //sprintf(html, "<hr>\n<form method=get/><input type=hidden name=sw value=2/>\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><script src=slider.js></script>\n<input type=submit value=\"MOVE STEPPER OX\"></form>\n", steps_state);
+        //plen=fill_tcp_data(buf, plen, html);
+
         return(plen);
 }
 
@@ -212,8 +212,6 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
 
 int main(void){
 
-	/*RS232 INIT SECTION*/
-	USART_Init( __UBRR );
 
 		//ustawienie TIMER0 dla F_CPU=20MHz
 		TCCR0 |= (1<<WGM01);				 //tryb CTC
@@ -241,16 +239,7 @@ int main(void){
 
         sei();
 
-        uart_puts("RS232 OK!");
-        uart_putc('\r');
-        uart_putc('\n');
-
         while(1){
-
-        	if(s1_flag){
-        		uart_putc('.');
-        		s1_flag = 0;
-        	}
 
                 // read packet, handle ping and wait for a tcp packet:
                 dat_p=packetloop_icmp_tcp(buf,enc28j60PacketReceive(BUFFER_SIZE, buf));
