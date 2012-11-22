@@ -154,7 +154,8 @@ uint16_t print_js(void)
 uint16_t print_webpage(uint8_t *buf, uint8_t on)
 {
         uint16_t plen;
-        char test[200];
+        char ox[200];
+        char oy[200];
         //char html[700];
         plen=http200ok();
         plen=fill_tcp_data_p(buf,plen,PSTR("<pre>"));
@@ -179,27 +180,30 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //STEPPER + JS OX
         plen=fill_tcp_data_p(buf,plen,PSTR("<hr>\n<form method=get/>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<input type=hidden name=sw value=2/>"));
-        sprintf(test, "\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><span id=rangeH>%d</span>", steps_state, steps_state);
-        plen=fill_tcp_data(buf, plen, test);
+        sprintf(ox, "\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><span id=rangeH>%d</span>", steps_state, steps_state);
+        plen=fill_tcp_data(buf, plen, ox);
         //plen=fill_tcp_data_p(buf,plen,PSTR("\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value,'rangeH')\"/>"));
         //plen=fill_tcp_data_p(buf,plen,PSTR("<span id=rangeH>0</span>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<script src=slider.js></script>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("\n<input type=submit value=\"MOVE STEPPER OX\"></form>\n"));
 
-        sprintf(test, "value=%d", steps_state);
-        plen=fill_tcp_data(buf, plen, test);
+        //sprintf(test, "value=%d", steps_state);
+        //plen=fill_tcp_data(buf, plen, test);
 
         //STEPPER + JS OY
-        /*plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form method=get action=\""));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\"><input type=hidden name=sw value=2>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\">\nSTEPS Vertical: <input type=range class=\"sliderV\" name=oy min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value, 'rangeV')\"/>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\"><span id=rangeV>0</span>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("<script type=text/javascript>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("function showValue(newValue, target){document.getElementById(target).innerHTML=newValue;}"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("</script>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE STEPPER OY\"></form>\n"));
-*/
-        plen=fill_tcp_data_p(buf,plen,PSTR("\n<a href=\".\">[refresh status]</a>\n"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("<hr>\n<form method=get/>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("<input type=hidden name=sw value=2/>"));
+        sprintf(oy, "\nSTEPS Horizontal: <input type=range class=\"sliderV\" name=oy min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><span id=rangeH>%d</span>", steps_state, steps_state);
+        plen=fill_tcp_data(buf, plen, oy);
+        //plen=fill_tcp_data_p(buf,plen,PSTR("\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value,'rangeH')\"/>"));
+        //plen=fill_tcp_data_p(buf,plen,PSTR("<span id=rangeH>0</span>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("<script src=slider.js></script>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\n<input type=submit value=\"MOVE STEPPER OY\"></form>\n"));
+
+        //sprintf(test, "value=%d", steps_state);
+        //plen=fill_tcp_data(buf, plen, test);
+
+        //plen=fill_tcp_data_p(buf,plen,PSTR("\n<a href=\".\">[refresh status]</a>\n"));
         plen=fill_tcp_data_p(buf,plen,PSTR("</pre>\n"));
 
         //sprintf(html, "<hr>\n<form method=get/><input type=hidden name=sw value=2/>\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><script src=slider.js></script>\n<input type=submit value=\"MOVE STEPPER OX\"></form>\n", steps_state);

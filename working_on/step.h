@@ -22,10 +22,10 @@
 
 /* definicje pinow sterujacych na osi OY */
 
-#define C1 (1<<PC0)
-#define C2 (1<<PC1)
-#define D1 (1<<PC2)
-#define D2 (1<<PC3)
+#define C1 (1<<PC7)
+#define C2 (1<<PC6)
+#define D1 (1<<PC5)
+#define D2 (1<<PC4)
 
 
 
