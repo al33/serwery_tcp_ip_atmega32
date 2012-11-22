@@ -96,12 +96,16 @@ int8_t analyse_get_url(char *str)
                 		if(steps_state > steps_received){
                 			left_dir = 1;
                 			right_dir = 0;
+                			up_dir = 0;
+                			down_dir = 0;
                 			steps_todo = (steps_state - steps_received);
                 			steps_state = steps_received;
                 		}
                 		else if(steps_received > steps_state){
                 			left_dir = 0;
                 			right_dir = 1;
+                			up_dir = 0;
+                			down_dir = 0;
                 		    steps_todo = (steps_received - steps_state);
                 		    steps_state = steps_received;
                 		}
@@ -113,12 +117,16 @@ int8_t analyse_get_url(char *str)
                 		if(steps_state > steps_received){
                 			down_dir = 1;
                 			up_dir = 0;
+                			left_dir = 0;
+                			right_dir = 0;
                 			steps_todo = (steps_state - steps_received);
                 			steps_state = steps_received;
                 		}
                 		else if(steps_received > steps_state){
                 			down_dir = 0;
                 			up_dir = 1;
+                			left_dir = 0;
+                			right_dir = 0;
                 			steps_todo = (steps_received - steps_state);
                 			steps_state = steps_received;
                 		}
@@ -185,7 +193,7 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //plen=fill_tcp_data_p(buf,plen,PSTR("\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value,'rangeH')\"/>"));
         //plen=fill_tcp_data_p(buf,plen,PSTR("<span id=rangeH>0</span>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<script src=slider.js></script>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\n<input type=submit value=\"MOVE STEPPER OX\"></form>\n"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\n<input type=submit value=\"STEPPER OX\"></form>\n"));
 
         //sprintf(test, "value=%d", steps_state);
         //plen=fill_tcp_data(buf, plen, test);
@@ -193,12 +201,12 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //STEPPER + JS OY
         plen=fill_tcp_data_p(buf,plen,PSTR("<hr>\n<form method=get/>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<input type=hidden name=sw value=2/>"));
-        sprintf(oy, "\nSTEPS Horizontal: <input type=range class=\"sliderV\" name=oy min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><span id=rangeH>%d</span>", steps_state, steps_state);
+        sprintf(oy, "\nSTEPS Horizontal: <input type=range class=\"sliderV\" name=oy min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeV')\"/><span id=rangeV>%d</span>", steps_state, steps_state);
         plen=fill_tcp_data(buf, plen, oy);
         //plen=fill_tcp_data_p(buf,plen,PSTR("\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value,'rangeH')\"/>"));
         //plen=fill_tcp_data_p(buf,plen,PSTR("<span id=rangeH>0</span>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<script src=slider.js></script>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\n<input type=submit value=\"MOVE STEPPER OY\"></form>\n"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("\n<input type=submit value=\"STEPPER OY\"></form>\n"));
 
         //sprintf(test, "value=%d", steps_state);
         //plen=fill_tcp_data(buf, plen, test);
