@@ -31,7 +31,6 @@
 
 
 /*STEPPER VARIABLES*/
-#define STEPS 100
 volatile uint8_t ms2_flag;
 extern uint8_t steps_cmd;
 extern uint8_t start_stepper;
@@ -65,11 +64,6 @@ static char gStrbuf[25];
 int8_t analyse_get_url(char *str)
 {
 
-/*    if (strncmp("slider.js",str,9)==0){
-    	PORTD|= (1<<PORTD7);
-            return(10);
-
-    }*/
         //uint8_t loop=15;
         // the first slash:
         if (*str == '/'){
@@ -155,7 +149,6 @@ uint16_t print_js(void)
 {
 	uint16_t plen;
 	plen = http200okjs();
-	//plen = fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n"));
 	plen = fill_tcp_data_p(buf, plen, PSTR("function showValue(e,t){document.getElementById(t).innerHTML=e}"));
 	return(plen);
 }
@@ -222,14 +215,6 @@ int main(void){
 	/*RS232 INIT SECTION*/
 	USART_Init( __UBRR );
 
-/*
- ustawienie TIMER0 dla F_CPU=16MHz
-		TCCR0 |= (1<<WGM01);				 tryb CTC
-		TCCR0 |= (1<<CS02)|(1<<CS00);		 preskaler = 1024
-		OCR0 = 39;							//przepelnienie dla 400Hz IDEANE KROKI!
-		TIMSK |= (1<<OCIE0);				 zezwolenie na przerwanie CompareMatch
- przerwanie wykonywane z czêstotliwoœci¹ ok 2,5ms (400 razy na sekundê)
-*/
 		//ustawienie TIMER0 dla F_CPU=20MHz
 		TCCR0 |= (1<<WGM01);				 //tryb CTC
 		TCCR0 |= (1<<CS02)|(1<<CS00);		 //preskaler = 1024
@@ -267,10 +252,6 @@ int main(void){
         		s1_flag = 0;
         	}
 
-        	//if(ms2_flag){				//krecenie motorkiem bez przerwy
-        		//kroki_lewo();
-        		//ms2_flag=0;
-        	//}
                 // read packet, handle ping and wait for a tcp packet:
                 dat_p=packetloop_icmp_tcp(buf,enc28j60PacketReceive(BUFFER_SIZE, buf));
 
@@ -330,18 +311,13 @@ int main(void){
                 // tcp port 80 begin
                 if (strncmp("GET ",(char *)&(buf[dat_p]),4)!=0){
                         // head, post and other methods:
-                		//plen=http200okjs();
                 		plen=http200ok();
-                		//plen = fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n"));
-                		//plen=print_js();
                         plen=fill_tcp_data_p(buf,plen,PSTR("<h1>200 OK</h1>"));
                         goto SENDTCP;
                 }
                 // just one web page in the "root directory" of the web server
                 if (strncmp("/ ",(char *)&(buf[dat_p+4]),2)==0){
                 		plen=http200ok();
-                		//plen=http200okjs();
-                		//plen=print_js();
 						plen=print_webpage(buf,(PORTD & (1<<PORTD7)));
                         goto SENDTCP;
                 }
@@ -370,7 +346,6 @@ int main(void){
                                 }
                                 if (cmd==10){
                                 	plen=http200okjs();
-                                	//plen=fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n"));
                                 	plen=print_js();
                                 	goto SENDTCP;
                                 }
