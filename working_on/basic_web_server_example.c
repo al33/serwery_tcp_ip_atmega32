@@ -10,8 +10,7 @@
  * Chip type           : Atmega88/168/328 with ENC28J60
  *
  *
- * MODYFIKACJE: Miros³aw Kardaœ --- ATmega32
- * MODYFIKACJE: Robert Mleczko --- Silniki krokowe
+ * MODYFIKACJE: Robert Mleczko --- ATMEGA32, Silniki krokowe, www, html5 + js
  *
  *
  *********************************************/
@@ -26,9 +25,6 @@
 #include "net.h"
 #include "step.h"
 #include "websrv_help_functions.h"
-
-//LCD INCLUDE
-#include "lcd44780.h"
 
 //RS232 INCLUDE
 #include "MKUART/mkuart.h"
@@ -225,12 +221,6 @@ int main(void){
 
 	/*RS232 INIT SECTION*/
 	USART_Init( __UBRR );
-
-	/*LCD INIT SECTION*/
-		DDRA |= (1<<PA0);
-		PORTA |= (1<<PA0);
-		lcd_init();
-		lcd_str_P( PSTR("LCD INIT OK!") );
 
 /*
  ustawienie TIMER0 dla F_CPU=16MHz
