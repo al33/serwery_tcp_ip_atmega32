@@ -19,6 +19,7 @@
 #include <avr/interrupt.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "ip_arp_udp_tcp.h"
 #include "enc28j60.h"
 #include "util/delay.h"
@@ -168,8 +169,7 @@ uint16_t print_js(void)
 uint16_t print_webpage(uint8_t *buf, uint8_t on)
 {
         uint16_t plen;
-        char test[5];
-        char a=1;
+        char test[200];
         plen=http200ok();
         plen=fill_tcp_data_p(buf,plen,PSTR("<pre>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<font color='green' size='6'><b>Witaj !</b>\n</font>"));
@@ -194,11 +194,15 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //STEPPER + JS OX
         plen=fill_tcp_data_p(buf,plen,PSTR("<hr>\n<form method=get/>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<input type=hidden name=sw value=2/>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value,'rangeH')\"/>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("<span id=rangeH>0</span>"));
+        sprintf(test, "\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/>\<span id=rangeH>%d</span>", steps_state, steps_state);
+        plen=fill_tcp_data(buf, plen, test);
+        //plen=fill_tcp_data_p(buf,plen,PSTR("\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value,'rangeH')\"/>"));
+        //plen=fill_tcp_data_p(buf,plen,PSTR("<span id=rangeH>0</span>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<script src=slider.js></script>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("\n<input type=submit value=\"MOVE STEPPER OX\"></form>\n"));
-        //plen=fill_tcp_data(buf, plen, sprintf(test, "a=%d", a));
+
+        sprintf(test, "value=%d", steps_state);
+        plen=fill_tcp_data(buf, plen, test);
 
         //STEPPER + JS OY
         /*plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form method=get action=\""));
