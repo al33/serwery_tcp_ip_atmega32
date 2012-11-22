@@ -194,7 +194,7 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //STEPPER + JS OX
         plen=fill_tcp_data_p(buf,plen,PSTR("<hr>\n<form method=get/>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<input type=hidden name=sw value=2/>"));
-        sprintf(test, "\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/>\<span id=rangeH>%d</span>", steps_state, steps_state);
+        sprintf(test, "\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><span id=rangeH>%d</span>", steps_state, steps_state);
         plen=fill_tcp_data(buf, plen, test);
         //plen=fill_tcp_data_p(buf,plen,PSTR("\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value,'rangeH')\"/>"));
         //plen=fill_tcp_data_p(buf,plen,PSTR("<span id=rangeH>0</span>"));
