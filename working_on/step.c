@@ -13,7 +13,8 @@
 #include "step.h"
 
 uint8_t start_stepper = 0;
-uint8_t steps_state = 0;
+uint8_t steps_state_h = 0;
+uint8_t steps_state_v = 0;
 uint8_t steps_received = 0;
 uint8_t steps_todo = 0;
 uint8_t steps_cmd = 0;

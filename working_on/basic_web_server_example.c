@@ -30,7 +30,8 @@
 volatile uint8_t ms2_flag;
 extern uint8_t steps_cmd;
 extern uint8_t start_stepper;
-extern uint8_t steps_state;
+extern uint8_t steps_state_h;
+extern uint8_t steps_state_v;
 extern uint8_t steps_received;
 extern uint8_t steps_todo;
 extern uint8_t right_dir;
@@ -93,42 +94,42 @@ int8_t analyse_get_url(char *str)
         	//Krecenie po osi OX
                 	if(find_key_val(str, gStrbuf,5,"ox")){
                 		steps_received = atoi(gStrbuf);
-                		if(steps_state > steps_received){
+                		if(steps_state_h > steps_received){
                 			left_dir = 1;
                 			right_dir = 0;
                 			up_dir = 0;
                 			down_dir = 0;
-                			steps_todo = (steps_state - steps_received);
-                			steps_state = steps_received;
+                			steps_todo = (steps_state_h - steps_received);
+                			steps_state_h = steps_received;
                 		}
-                		else if(steps_received > steps_state){
+                		else if(steps_received > steps_state_h){
                 			left_dir = 0;
                 			right_dir = 1;
                 			up_dir = 0;
                 			down_dir = 0;
-                		    steps_todo = (steps_received - steps_state);
-                		    steps_state = steps_received;
+                		    steps_todo = (steps_received - steps_state_h);
+                		    steps_state_h = steps_received;
                 		}
 
                 	}
             //Krecenie po osi OY
                 	if(find_key_val(str, gStrbuf,5,"oy")){
                 		steps_received = atoi(gStrbuf);
-                		if(steps_state > steps_received){
+                		if(steps_state_v > steps_received){
                 			down_dir = 1;
                 			up_dir = 0;
                 			left_dir = 0;
                 			right_dir = 0;
-                			steps_todo = (steps_state - steps_received);
-                			steps_state = steps_received;
+                			steps_todo = (steps_state_v - steps_received);
+                			steps_state_v = steps_received;
                 		}
-                		else if(steps_received > steps_state){
+                		else if(steps_received > steps_state_v){
                 			down_dir = 0;
                 			up_dir = 1;
                 			left_dir = 0;
                 			right_dir = 0;
-                			steps_todo = (steps_received - steps_state);
-                			steps_state = steps_received;
+                			steps_todo = (steps_received - steps_state_v);
+                			steps_state_v = steps_received;
                 		}
 
                 	}
@@ -188,7 +189,7 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //STEPPER + JS OX
         plen=fill_tcp_data_p(buf,plen,PSTR("<hr>\n<form method=get/>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<input type=hidden name=sw value=2/>"));
-        sprintf(ox, "\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><span id=rangeH>%d</span>", steps_state, steps_state);
+        sprintf(ox, "\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><span id=rangeH>%d</span>", steps_state_h, steps_state_h);
         plen=fill_tcp_data(buf, plen, ox);
         //plen=fill_tcp_data_p(buf,plen,PSTR("\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value,'rangeH')\"/>"));
         //plen=fill_tcp_data_p(buf,plen,PSTR("<span id=rangeH>0</span>"));
@@ -201,7 +202,7 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //STEPPER + JS OY
         plen=fill_tcp_data_p(buf,plen,PSTR("<hr>\n<form method=get/>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<input type=hidden name=sw value=2/>"));
-        sprintf(oy, "\nSTEPS Horizontal: <input type=range class=\"sliderV\" name=oy min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeV')\"/><span id=rangeV>%d</span>", steps_state, steps_state);
+        sprintf(oy, "\nSTEPS Horizontal: <input type=range class=\"sliderV\" name=oy min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeV')\"/><span id=rangeV>%d</span>", steps_state_v, steps_state_v);
         plen=fill_tcp_data(buf, plen, oy);
         //plen=fill_tcp_data_p(buf,plen,PSTR("\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value,'rangeH')\"/>"));
         //plen=fill_tcp_data_p(buf,plen,PSTR("<span id=rangeH>0</span>"));
