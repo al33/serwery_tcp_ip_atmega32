@@ -168,7 +168,7 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //char html[700];
         plen=http200ok();
         plen=fill_tcp_data_p(buf,plen,PSTR("<pre>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("<font color='green' size='6'><b>Witaj !</b>\n</font>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("<b>Witaj !</b>\n"));
         if(on){
                	   plen=fill_tcp_data_p(buf,plen,PSTR(" <font color=#00FF00>ON</font>"));
                    plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=0\">[switch off]</a>\n"));
@@ -202,12 +202,13 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //STEPPER + JS OY
         plen=fill_tcp_data_p(buf,plen,PSTR("<hr>\n<form method=get/>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<input type=hidden name=sw value=2/>"));
-        sprintf(oy, "\nSTEPS Horizontal: <input type=range class=\"sliderV\" name=oy min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeV')\"/><span id=rangeV>%d</span>", steps_state_v, steps_state_v);
+        sprintf(oy, "\nSTEPS Vertical: <input type=range class=\"sliderV\" name=oy min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeV')\"/><span id=rangeV>%d</span>", steps_state_v, steps_state_v);
         plen=fill_tcp_data(buf, plen, oy);
         //plen=fill_tcp_data_p(buf,plen,PSTR("\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value,'rangeH')\"/>"));
         //plen=fill_tcp_data_p(buf,plen,PSTR("<span id=rangeH>0</span>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<script src=slider.js></script>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("\n<input type=submit value=\"STEPPER OY\"></form>\n"));
+        plen=fill_tcp_data_p(buf, plen, PSTR("<hr>\n<p>Atmega32+enc28j60 by Robert Mleczko</p>"));
 
         //sprintf(test, "value=%d", steps_state);
         //plen=fill_tcp_data(buf, plen, test);

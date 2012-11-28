@@ -1,7 +1,7 @@
 Serwer www oparty na kodzie z tuxgraphics.org
-Zmodyfikowany do obslugi Atmega32 --- kod z ksiazki Miroslawa Kardasia
+Zmodyfikowany do obslugi Atmega32
 Atmega32 kwarc 16MHz
-Enc28j60 3.3V z wylaczonym clkout ip: 192.168.0.110
+Enc28j60 3.3V z wylaczonym clkout ip: 192.168.1.110
 Konwerter poziomow M32 <-> enc28j60 - 74HC125
 Silnik krokowy bipolarny EM-463 5V - 100 krokow
 Sterownik silnika - L293D
@@ -10,16 +10,10 @@ PRACOWAC NA:
 working_on
 
 TODO:
----
-Wrzucenie obslugi silnika do przerwania? (bo gubi kroki)
----
 
 ---
 Dorobienie poruszania na osi OY
 Zakres 180 stopni (50 krokow)
-if(kroki_gora = 36){
-	kroki dol !<36;
-}
 ---
 Zapisywanie current_position do EEPROM aby przy ponownym uruchomieniu wracal do ostatniej pozycji
 ---
@@ -27,6 +21,7 @@ Zczytywanie current_position z EEPROM przy uruchomieniu ukladu ew. ustawianie si
 ---
 Ustawienie automatycznego zapisu pozycji do EEPROM w przypadku spadku zasilania (event na INT0)
 ---
+Uzycie krancowki w celu powrotu silnika do pozycji 0:0 w przypadku utraty zasilania
 ---
 Optymalizacja kodu i strony www
 ---
