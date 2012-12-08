@@ -32,7 +32,7 @@ void kroki_dol(void);
 
 	void silnik_stop(void) {
 		PORTA &= ~(A1|A2|B1|B2);
-		PORTC &= ~(C1|C2|D1|D2);
+		PORTA &= ~(C1|C2|D1|D2);
 	}
 
 	/* funkcja wykonuj¹ca cyklicznie kroki (obrót w lewo) */

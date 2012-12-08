@@ -22,10 +22,16 @@
 
 /* definicje pinow sterujacych na osi OY */
 
+/*
 #define C1 (1<<PC7)
 #define C2 (1<<PC6)
 #define D1 (1<<PC5)
 #define D2 (1<<PC4)
+*/
+#define C1 (1<<PA7)
+#define C2 (1<<PA6)
+#define D1 (1<<PA5)
+#define D2 (1<<PA4)
 
 
 
@@ -37,10 +43,17 @@
 #define KROK4H PORTA |= A1|B2; PORTA &= ~(A2|B1)
 
 /* definicje kroków steruj¹cych prac¹ silnika na osi OY */
+/*
 #define KROK1V PORTC |= C1|D1; PORTC &= ~(C2|D2)
 #define KROK2V PORTC |= C2|D1; PORTC &= ~(C1|D2)
 #define KROK3V PORTC |= C2|D2; PORTC &= ~(C1|D1)
 #define KROK4V PORTC |= C1|D2; PORTC &= ~(C2|D1)
+*/
+#define KROK1V PORTA |= C1|D1; PORTA &= ~(C2|D2)
+#define KROK2V PORTA |= C2|D1; PORTA &= ~(C1|D2)
+#define KROK3V PORTA |= C2|D2; PORTA &= ~(C1|D1)
+#define KROK4V PORTA |= C1|D2; PORTA &= ~(C2|D1)
+
 
 void silnik_stop(void);
 void kroki_lewo(void);
