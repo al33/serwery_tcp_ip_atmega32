@@ -44,6 +44,7 @@ extern uint8_t down_dir;
 volatile uint8_t s1_flag;	/* flaga tykniêcia timera co 1 sekundê */
 volatile uint8_t sekundy;	/* licznik sekund 0-59 */
 volatile uint16_t ms2_cnt;
+volatile uint8_t s1_stop_flag = 0;
 
 
 // ustalamy adres MAC
@@ -235,6 +236,11 @@ int main(void){
 		TIMSK |= (1<<OCIE0);				 //zezwolenie na przerwanie CompareMatch
 		//przerwanie wykonywane z czêstotliwoœci¹ ok 2,5ms (400 razy na sekundê)
 
+		//Ustawienie przerwañ na INT1, zbocze opadaj¹ce
+		MCUCR |= (1<<ISC11);
+		GICR |= (1<<INT1);
+		PORTD |= (1<<PD3);
+
         uint16_t dat_p;
         int8_t cmd;
         uint16_t plen;
@@ -242,13 +248,21 @@ int main(void){
         silnik_stop();
 
         // Dioda LED na PD7:
-        DDRD|= (1<<DDD7);
+        DDRD|= (1<<PD7);
         PORTD &= ~(1<<PORTD7);// Dioda OFF
 
+        //Init diod LED dla silnikow
         DDRD |= S1_LED;
         DDRD |= S2_LED;
-        PORTD &= ~S1_LED;
-        PORTD &= ~S2_LED;
+        S1_LED_OFF;
+        S2_LED_OFF;
+
+        //Init diod LED dla przesylu danych
+        DDRC |= DATA_REC_LED;
+        DDRC |= DATA_SEND_LED;
+        DATA_REC_LED_OFF;
+        DATA_SEND_LED_OFF;
+
 
         //initialize the hardware driver for the enc28j60
         enc28j60Init(mymac);
@@ -261,8 +275,20 @@ int main(void){
 
         while(1){
 
+        	if(s1_stop_flag == 0){
+        		if(ms2_flag){
+        			kroki_lewo();
+        			ms2_flag = 0;
+        			PORTD|= (1<<PORTD7);
+        		}
+        	}
+
                 // read packet, handle ping and wait for a tcp packet:
                 dat_p=packetloop_icmp_tcp(buf,enc28j60PacketReceive(BUFFER_SIZE, buf));
+                if(dat_p){
+                	DATA_REC_LED_ON;
+                }
+
 
 //!!!!!!!!!!	REQUESTY DO SILNIKA PO TYM KOMENTARZU BO if(dat_p==0)
 //PRZY DRUGIM PRZEBIEGU PETLI OMIJA CALEGO while() !!!!!!!!!!
@@ -320,6 +346,7 @@ int main(void){
                 /* dat_p will be unequal to zero if there is a valid 
                  * http get */
                 if(dat_p==0){
+                	DATA_REC_LED_OFF;
                         // no http request
                         continue;
                 }
@@ -392,3 +419,7 @@ ISR(TIMER0_COMP_vect){
 			}
 	}
 
+ISR(INT1_vect){
+	s1_stop_flag = 1;
+	DATA_SEND_LED_ON;
+}
