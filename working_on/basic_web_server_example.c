@@ -25,6 +25,7 @@
 #include "net.h"
 #include "step.h"
 #include "websrv_help_functions.h"
+#include "led.h"
 
 /*STEPPER VARIABLES*/
 volatile uint8_t ms2_flag;
@@ -244,6 +245,11 @@ int main(void){
         DDRD|= (1<<DDD7);
         PORTD &= ~(1<<PORTD7);// Dioda OFF
 
+        DDRD |= S1_LED;
+        DDRD |= S2_LED;
+        PORTD &= ~S1_LED;
+        PORTD &= ~S2_LED;
+
         //initialize the hardware driver for the enc28j60
         enc28j60Init(mymac);
         enc28j60PhyWrite(PHLCON,0x476);
@@ -265,6 +271,7 @@ int main(void){
                 if(start_stepper && steps_todo)
                	{
                 	if(left_dir){
+                		S1_LED_ON;
                 		if(ms2_flag){
                 			kroki_lewo();
                 			steps_todo --;
@@ -273,6 +280,7 @@ int main(void){
                 	}
                 	if(right_dir)
                 	{
+                		S1_LED_ON;
                 		if(ms2_flag){
                 			kroki_prawo();
                 			steps_todo --;
@@ -280,6 +288,7 @@ int main(void){
                 		}
                 	}
                 	if(down_dir){
+                		S2_LED_ON;
                 		if(ms2_flag){
                 			kroki_dol();
                 			steps_todo --;
@@ -287,6 +296,7 @@ int main(void){
                 		}
                 	}
                 	if(up_dir){
+                		S2_LED_ON;
                 		if(ms2_flag){
                 			kroki_gora();
                 			steps_todo --;
@@ -297,6 +307,8 @@ int main(void){
                 else{
 					silnik_stop();
 					start_stepper = 0;
+					S1_LED_OFF;
+					S2_LED_OFF;
 				}
 
 
