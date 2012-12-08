@@ -275,13 +275,18 @@ int main(void){
 
         while(1){
 
-        	if(s1_stop_flag == 0){
-        		if(ms2_flag){
-        			kroki_lewo();
-        			ms2_flag = 0;
-        			PORTD|= (1<<PORTD7);
-        		}
+        	if(ms2_flag){
+        		kroki_prawo();
+        		ms2_flag = 0;
         	}
+
+        	/*while(s1_stop_flag == 0){
+        		if(ms2_flag){
+        			kroki_prawo();
+        			ms2_flag = 0;
+        		}
+        	}*/
+
 
                 // read packet, handle ping and wait for a tcp packet:
                 dat_p=packetloop_icmp_tcp(buf,enc28j60PacketReceive(BUFFER_SIZE, buf));
@@ -419,6 +424,7 @@ ISR(TIMER0_COMP_vect){
 			}
 	}
 
+//OBSLUGA PRZERWANIA INT1
 ISR(INT1_vect){
 	s1_stop_flag = 1;
 	DATA_SEND_LED_ON;
