@@ -318,7 +318,7 @@ int main(void){
 
         sei(); //odblokowanie przerwan
 
-        led_step_init(); //inicjalizacja silnika i diod
+        //led_step_init(); //inicjalizacja silnika i diod
 
         //initialize the hardware driver for the enc28j60
         enc28j60Init(mymac);
@@ -327,7 +327,7 @@ int main(void){
         //init the ethernet/ip layer:
         init_ip_arp_udp_tcp(mymac,myip,MYWWWPORT);
 
-
+        led_step_init(); //inicjalizacja silnika i diod
 
         while(1){
 
