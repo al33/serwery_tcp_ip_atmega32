@@ -21,10 +21,10 @@
 #include <stdio.h>
 #include "ip_arp_udp_tcp.h"
 #include "enc28j60.h"
+#include "websrv_help_functions.h"
 #include "util/delay.h"
 #include "net.h"
 #include "step.h"
-#include "websrv_help_functions.h"
 #include "led.h"
 
 /*STEPPER VARIABLES*/
@@ -44,7 +44,8 @@ extern uint8_t down_dir;
 volatile uint8_t s1_flag;	/* flaga tykniêcia timera co 1 sekundê */
 volatile uint8_t sekundy;	/* licznik sekund 0-59 */
 volatile uint16_t ms2_cnt;
-volatile uint8_t s1_stop_flag = 0;
+volatile uint8_t s1_stop_flag = 0; //flaga wylaczenia silnika s1 po dotknieciu krancowki na INT1
+volatile uint8_t s2_stop_flag = 0; //flaga wylaczenia silnika s2 po dotknieciu krancowki na INT0
 
 
 // ustalamy adres MAC
@@ -58,6 +59,39 @@ static uint8_t myip[4] = {192,168,1,110};
 #define BUFFER_SIZE 850
 static uint8_t buf[BUFFER_SIZE+1];
 static char gStrbuf[25];
+
+//Inicjalizacja led i silnika
+void led_step_init(void){
+	uint8_t init_flag = 0;
+	while(init_flag == 0){
+		if(sekundy == 0){
+			S1_LED_ON;
+		}
+		if(sekundy == 1){
+			S2_LED_ON;
+		}
+		if(sekundy == 2){
+			DATA_REC_LED_ON;
+		}
+		if(sekundy == 3){
+			DATA_SEND_LED_ON;
+		}
+		if(sekundy > 3){
+			init_flag = 1;
+		}
+	}
+	S1_LED_OFF;
+	S2_LED_OFF;
+	DATA_REC_LED_OFF;
+	DATA_SEND_LED_OFF;
+	//Krecenie silnikiem s1 az do dotkniecia krancowki na INT1
+	while(s1_stop_flag == 0){
+		if(ms2_flag){
+			kroki_prawo();
+	        ms2_flag = 0;
+	    }
+	}
+}
 
 //ANALIZA URLA
 int8_t analyse_get_url(char *str)
@@ -241,6 +275,8 @@ int main(void){
 		GICR |= (1<<INT1);
 		PORTD |= (1<<PD3);
 
+		//Ustawienie przerwan na INT0, zbocze opadajace
+
         uint16_t dat_p;
         int8_t cmd;
         uint16_t plen;
@@ -263,7 +299,6 @@ int main(void){
         DATA_REC_LED_OFF;
         DATA_SEND_LED_OFF;
 
-
         //initialize the hardware driver for the enc28j60
         enc28j60Init(mymac);
         enc28j60PhyWrite(PHLCON,0x476);
@@ -273,20 +308,9 @@ int main(void){
 
         sei();
 
+        led_step_init();
+
         while(1){
-
-        	if(ms2_flag){
-        		kroki_prawo();
-        		ms2_flag = 0;
-        	}
-
-        	/*while(s1_stop_flag == 0){
-        		if(ms2_flag){
-        			kroki_prawo();
-        			ms2_flag = 0;
-        		}
-        	}*/
-
 
                 // read packet, handle ping and wait for a tcp packet:
                 dat_p=packetloop_icmp_tcp(buf,enc28j60PacketReceive(BUFFER_SIZE, buf));
