@@ -96,7 +96,7 @@ void led_step_init(void){
 	        ms2_flag = 0;
 	    }
 	}
-	silnik_stop(); //wazne by wylaczac silnik po kazdorazowym jego uzyciu!!!
+	silnik_stop(); //wazne by wylaczac silnik po kazdorazowym jego uzyciu!!!, czas ustawienia silnika nie moze byc wyzszy niz 1s
 	//Krecenie silnikiem s2 az do dotkniecia krancowki na INT0
 	while(s2_stop_flag == 0){
 		if(ms2_flag){
