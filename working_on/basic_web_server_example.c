@@ -66,7 +66,12 @@ void led_step_init(void){
 	while(init_flag == 0){
 		if(sekundy == 0){
 			S1_LED_ON;
+			S2_LED_ON;
+			DATA_REC_LED_ON;
+			DATA_SEND_LED_ON;
 		}
+		if(sekundy > 1)
+			init_flag = 1;
 		if(sekundy == 1){
 			S2_LED_ON;
 		}
@@ -84,7 +89,7 @@ void led_step_init(void){
 	S2_LED_OFF;
 	DATA_REC_LED_OFF;
 	DATA_SEND_LED_OFF;
-	//Krecenie silnikiem s1 az do dotkniecia krancowki na INT1
+	/*//Krecenie silnikiem s1 az do dotkniecia krancowki na INT1
 	while(s1_stop_flag == 0){
 		if(ms2_flag){
 			kroki_prawo();
@@ -97,7 +102,7 @@ void led_step_init(void){
 			kroki_dol();
 			ms2_flag = 0;
 		}
-	}
+	}*/
 }
 
 //ANALIZA URLA
@@ -309,6 +314,10 @@ int main(void){
         DATA_REC_LED_OFF;
         DATA_SEND_LED_OFF;
 
+        sei(); //odblokowanie przerwan
+
+        led_step_init(); //inicjalizacja silnika i diod
+
         //initialize the hardware driver for the enc28j60
         enc28j60Init(mymac);
         enc28j60PhyWrite(PHLCON,0x476);
@@ -316,9 +325,7 @@ int main(void){
         //init the ethernet/ip layer:
         init_ip_arp_udp_tcp(mymac,myip,MYWWWPORT);
 
-        sei();
 
-        led_step_init();
 
         while(1){
 
