@@ -89,7 +89,7 @@ void led_step_init(void){
 	S2_LED_OFF;
 	DATA_REC_LED_OFF;
 	DATA_SEND_LED_OFF;
-	/*//Krecenie silnikiem s1 az do dotkniecia krancowki na INT1
+	//Krecenie silnikiem s1 az do dotkniecia krancowki na INT1
 	while(s1_stop_flag == 0){
 		if(ms2_flag){
 			kroki_prawo();
@@ -102,7 +102,7 @@ void led_step_init(void){
 			kroki_dol();
 			ms2_flag = 0;
 		}
-	}*/
+	}
 }
 
 //ANALIZA URLA
@@ -316,7 +316,7 @@ int main(void){
 
         sei(); //odblokowanie przerwan
 
-        led_step_init(); //inicjalizacja silnika i diod
+        //led_step_init(); //inicjalizacja silnika i diod
 
         //initialize the hardware driver for the enc28j60
         enc28j60Init(mymac);
@@ -338,7 +338,7 @@ int main(void){
 
 //!!!!!!!!!!	REQUESTY DO SILNIKA PO TYM KOMENTARZU BO if(dat_p==0)
 //PRZY DRUGIM PRZEBIEGU PETLI OMIJA CALEGO while() !!!!!!!!!!
-
+                //led_step_init(); //tu nie dziala
 
                 if(start_stepper && steps_todo)
                	{
@@ -393,6 +393,7 @@ int main(void){
                  * http get */
                 if(dat_p==0){
                 	DATA_REC_LED_OFF;
+                	//led_step_init();
                         // no http request
                         continue;
                 }
@@ -468,11 +469,9 @@ ISR(TIMER0_COMP_vect){
 //OBSLUGA PRZERWANIA INT1
 ISR(INT1_vect){
 	s1_stop_flag = 1;
-	DATA_SEND_LED_ON;
 }
 
 //OBSLUGA PRZERWANIA INT1
 ISR(INT0_vect){
 	s2_stop_flag = 1;
-	DATA_REC_LED_ON;
 }
