@@ -91,6 +91,13 @@ void led_step_init(void){
 	        ms2_flag = 0;
 	    }
 	}
+	//Krecenie silnikiem s2 az do dotkniecia krancowki na INT0
+	while(s2_stop_flag == 0){
+		if(ms2_flag){
+			kroki_dol();
+			ms2_flag = 0;
+		}
+	}
 }
 
 //ANALIZA URLA
@@ -276,6 +283,9 @@ int main(void){
 		PORTD |= (1<<PD3);
 
 		//Ustawienie przerwan na INT0, zbocze opadajace
+		MCUCR |= (1<<ISC01);
+		GICR |= (1<<INT0);
+		PORTD |= (1<<PD2);
 
         uint16_t dat_p;
         int8_t cmd;
@@ -452,4 +462,10 @@ ISR(TIMER0_COMP_vect){
 ISR(INT1_vect){
 	s1_stop_flag = 1;
 	DATA_SEND_LED_ON;
+}
+
+//OBSLUGA PRZERWANIA INT1
+ISR(INT0_vect){
+	s2_stop_flag = 1;
+	DATA_REC_LED_ON;
 }
