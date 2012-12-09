@@ -96,6 +96,7 @@ void led_step_init(void){
 	        ms2_flag = 0;
 	    }
 	}
+	silnik_stop(); //wazne by wylaczac silnik po kazdorazowym jego uzyciu!!!
 	//Krecenie silnikiem s2 az do dotkniecia krancowki na INT0
 	while(s2_stop_flag == 0){
 		if(ms2_flag){
@@ -103,6 +104,7 @@ void led_step_init(void){
 			ms2_flag = 0;
 		}
 	}
+	silnik_stop();
 }
 
 //ANALIZA URLA
@@ -316,7 +318,7 @@ int main(void){
 
         sei(); //odblokowanie przerwan
 
-        //led_step_init(); //inicjalizacja silnika i diod
+        led_step_init(); //inicjalizacja silnika i diod
 
         //initialize the hardware driver for the enc28j60
         enc28j60Init(mymac);
