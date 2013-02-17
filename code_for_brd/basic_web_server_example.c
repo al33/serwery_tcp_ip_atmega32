@@ -91,7 +91,7 @@ void led_step_init(void){
 	        ms2_flag = 0;
 	    }
 	}
-	silnik_stop(); //wazne by wylaczac silnik po kazdorazowym jego uzyciu!!!, czas ustawienia silnika nie moze byc wyzszy niz 1s
+	silnik_hold(); //wazne by wylaczac silnik po kazdorazowym jego uzyciu!!!, czas ustawienia silnika nie moze byc wyzszy niz 1s
 	//Krecenie silnikiem s2 az do dotkniecia krancowki na INT0
 	while(s2_stop_flag == 0){
 		if(ms2_flag){
@@ -217,7 +217,7 @@ uint16_t print_css(void)
 {
 	uint16_t plen;
 	plen = http200okcss();
-	plen = fill_tcp_data_p(buf, plen, PSTR("input[type=\"range\"] {margin-left: auto; margin-right: auto; text-align: center; background-color: black;}"));
+	plen = fill_tcp_data_p(buf, plen, PSTR("input[type=\"range\"] {margin-left: auto; margin-right: auto; text-align: center; background-color: black;} b{text-align: center;}"));
 	return(plen);
 }
 
