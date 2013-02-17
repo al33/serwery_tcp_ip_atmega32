@@ -68,7 +68,6 @@ void led_step_init(void){
 			S1_LED_ON;
 			S2_LED_ON;
 			DATA_REC_LED_ON;
-			DATA_SEND_LED_ON;
 		}
 		if(sekundy > 1)
 			init_flag = 1;
@@ -78,9 +77,6 @@ void led_step_init(void){
 		if(sekundy == 2){
 			DATA_REC_LED_ON;
 		}
-		if(sekundy == 3){
-			DATA_SEND_LED_ON;
-		}
 		if(sekundy > 3){
 			init_flag = 1;
 		}
@@ -88,7 +84,6 @@ void led_step_init(void){
 	S1_LED_OFF;
 	S2_LED_OFF;
 	DATA_REC_LED_OFF;
-	DATA_SEND_LED_OFF;
 	//Krecenie silnikiem s1 az do dotkniecia krancowki na INT1
 	while(s1_stop_flag == 0){
 		if(ms2_flag){
@@ -104,7 +99,8 @@ void led_step_init(void){
 			ms2_flag = 0;
 		}
 	}
-	silnik_stop();
+	//silnik_stop();
+	silnik_hold();
 }
 
 //ANALIZA URLA
@@ -121,6 +117,10 @@ int8_t analyse_get_url(char *str)
 
         if (strncmp("slider.js",str,9)==0){
                     return(10);
+        }
+
+        if (strncmp("style.css", str, 9)==0){
+        			return(11);
         }
 
 
@@ -199,12 +199,25 @@ uint16_t http200okjs(void)
         return(fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: application/x-javascript\r\nPragma: no-cache\r\n\r\n")));
 }
 
+uint16_t http200okcss(void)
+{
+        return(fill_tcp_data_p(buf,0,PSTR("HTTP/1.0 200 OK\r\nContent-Type: text/css\r\nPragma: no-cache\r\n\r\n")));
+}
+
 //slider.js
 uint16_t print_js(void)
 {
 	uint16_t plen;
 	plen = http200okjs();
 	plen = fill_tcp_data_p(buf, plen, PSTR("function showValue(e,t){document.getElementById(t).innerHTML=e}"));
+	return(plen);
+}
+
+uint16_t print_css(void)
+{
+	uint16_t plen;
+	plen = http200okcss();
+	plen = fill_tcp_data_p(buf, plen, PSTR("input[type=\"range\"] {margin-left: auto; margin-right: auto; text-align: center; background-color: black;}"));
 	return(plen);
 }
 
@@ -218,15 +231,16 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //char html[700];
         plen=http200ok();
         plen=fill_tcp_data_p(buf,plen,PSTR("<pre>"));
+        plen=fill_tcp_data_p(buf, plen, PSTR("<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<b>Witaj !</b>\n"));
-        if(on){
+        /*if(on){
                	   plen=fill_tcp_data_p(buf,plen,PSTR(" <font color=#00FF00>ON</font>"));
                    plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=0\">[switch off]</a>\n"));
               }
         else{
                    plen=fill_tcp_data_p(buf,plen,PSTR("OFF"));
                    plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=1\">[switch on]</a>\n"));
-            }
+            }*/
         /*STEPPER
                    plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form METHOD=get action=\""));
                    plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<input type=hidden name=sw value=2>\nLEFT<input size=20 type=text name=ox>\n<br>"));
@@ -281,8 +295,9 @@ int main(void){
 		TCCR0 |= (1<<WGM01);				 //tryb CTC
 		TCCR0 |= (1<<CS02)|(1<<CS00);		 //preskaler = 1024
 		//OCR0 = 48;							//przepelnienie dla 400Hz IDEANE KROKI!
-		//OCR0 = 97;		//200Hz
-		OCR0 = 195;		//100Hz
+		OCR0 = 97;		//200Hz
+		//OCR0 = 130;			//150Hz
+		//OCR0 = 195;		//100Hz
 		TIMSK |= (1<<OCIE0);				 //zezwolenie na przerwanie CompareMatch
 		//przerwanie wykonywane z czêstotliwoœci¹ ok 2,5ms (400 razy na sekundê)
 
@@ -313,10 +328,8 @@ int main(void){
         S2_LED_OFF;
 
         //Init diod LED dla przesylu danych
-        DDRC |= DATA_REC_LED;
-        DDRC |= DATA_SEND_LED;
+        DDRD |= DATA_REC_LED;
         DATA_REC_LED_OFF;
-        DATA_SEND_LED_OFF;
 
         sei(); //odblokowanie przerwan
 
@@ -381,7 +394,8 @@ int main(void){
                 	}
                 }
                 else{
-					silnik_stop();
+                	silnik_hold();
+					//silnik_stop();
 					start_stepper = 0;
 					S1_LED_OFF;
 					S2_LED_OFF;
@@ -440,6 +454,11 @@ int main(void){
                                 if (cmd==10){
                                 	plen=http200okjs();
                                 	plen=print_js();
+                                	goto SENDTCP;
+                                }
+                                if(cmd==11){
+                                	plen=http200okcss();
+                                	plen=print_css();
                                 	goto SENDTCP;
                                 }
 
