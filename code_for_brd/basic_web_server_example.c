@@ -217,7 +217,7 @@ uint16_t print_css(void)
 {
 	uint16_t plen;
 	plen = http200okcss();
-	plen = fill_tcp_data_p(buf, plen, PSTR("input[type=\"range\"] {margin-left: auto; margin-right: auto; text-align: center; background-color: black;} b{text-align: center;}"));
+	plen = fill_tcp_data_p(buf, plen, PSTR("input[type=\"range\"] {margin-left: auto; margin-right: auto; text-align: center; background-color: black;} b{text-align: center;} html{margin-left: auto; margin-right: auto; text-align: center; background-color: black;}"));
 	return(plen);
 }
 
@@ -230,7 +230,7 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         char oy[200];
         //char html[700];
         plen=http200ok();
-        plen=fill_tcp_data_p(buf,plen,PSTR("<pre>"));
+        //plen=fill_tcp_data_p(buf,plen,PSTR("<pre>"));
         plen=fill_tcp_data_p(buf, plen, PSTR("<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<b>Witaj !</b>\n"));
         /*if(on){
@@ -278,7 +278,7 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //plen=fill_tcp_data(buf, plen, test);
 
         //plen=fill_tcp_data_p(buf,plen,PSTR("\n<a href=\".\">[refresh status]</a>\n"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("</pre>\n"));
+        //plen=fill_tcp_data_p(buf,plen,PSTR("</pre>\n"));
 
         //sprintf(html, "<hr>\n<form method=get/><input type=hidden name=sw value=2/>\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><script src=slider.js></script>\n<input type=submit value=\"MOVE STEPPER OX\"></form>\n", steps_state);
         //plen=fill_tcp_data(buf, plen, html);
