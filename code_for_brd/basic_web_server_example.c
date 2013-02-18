@@ -217,7 +217,8 @@ uint16_t print_css(void)
 {
 	uint16_t plen;
 	plen = http200okcss();
-	plen = fill_tcp_data_p(buf, plen, PSTR("input[type=\"range\"] {margin-left: auto; margin-right: auto; text-align: center; background-color: black;} b{text-align: center;} html{margin-left: auto; margin-right: auto; text-align: center; background-color: black;}"));
+	plen = fill_tcp_data_p(buf, plen, PSTR("b{color: red;} html{margin-left: auto; margin-right: auto; text-align: center;}"));
+	plen = fill_tcp_data_p(buf, plen, PSTR(".slV {-webkit-appearance: slider-vertical;}"));
 	return(plen);
 }
 
@@ -228,11 +229,11 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         uint16_t plen;
         char ox[200];
         char oy[200];
-        //char html[700];
         plen=http200ok();
         //plen=fill_tcp_data_p(buf,plen,PSTR("<pre>"));
-        plen=fill_tcp_data_p(buf, plen, PSTR("<link rel=\"stylesheet\" type=\"text/css\" href=\"style.css\" />"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("<b>Witaj !</b>\n"));
+        plen=fill_tcp_data_p(buf, plen, PSTR("<link rel=stylesheet type=text/css href=style.css />"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("<script src=slider.js></script>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("<b>Kamera sterowana protoko³em TCP/IP</b>"));
         /*if(on){
                	   plen=fill_tcp_data_p(buf,plen,PSTR(" <font color=#00FF00>ON</font>"));
                    plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=0\">[switch off]</a>\n"));
@@ -241,47 +242,24 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
                    plen=fill_tcp_data_p(buf,plen,PSTR("OFF"));
                    plen=fill_tcp_data_p(buf,plen,PSTR(" <a href=\"./?sw=1\">[switch on]</a>\n"));
             }*/
-        /*STEPPER
-                   plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form METHOD=get action=\""));
-                   plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<input type=hidden name=sw value=2>\nLEFT<input size=20 type=text name=ox>\n<br>"));
-                   plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE LEFT\"></form>\n"));
 
-                   plen=fill_tcp_data_p(buf,plen,PSTR("<hr><br><form METHOD=get action=\""));
-                   plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<input type=hidden name=sw value=2>\nRIGHT<input size=20 type=text name=oy>\n<br>"));
-                   plen=fill_tcp_data_p(buf,plen,PSTR("\">\n<br><input type=submit value=\"MOVE RIGHT\"></form>\n"));
-*/
         //STEPPER + JS OX
-        plen=fill_tcp_data_p(buf,plen,PSTR("<hr>\n<form method=get/>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("<hr><form method=get/>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<input type=hidden name=sw value=2/>"));
-        sprintf(ox, "\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><span id=rangeH>%d</span>", steps_state_h, steps_state_h);
+        sprintf(ox, "Obrót w poziomie:<br> <input type=range name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><br><span>Pozycja: </span><span id=rangeH>%d</span>", steps_state_h, steps_state_h);
         plen=fill_tcp_data(buf, plen, ox);
-        //plen=fill_tcp_data_p(buf,plen,PSTR("\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value,'rangeH')\"/>"));
-        //plen=fill_tcp_data_p(buf,plen,PSTR("<span id=rangeH>0</span>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("<script src=slider.js></script>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\n<input type=submit value=\"STEPPER OX\"></form>\n"));
-
-        //sprintf(test, "value=%d", steps_state);
-        //plen=fill_tcp_data(buf, plen, test);
+        plen=fill_tcp_data_p(buf,plen,PSTR("<br><input type=submit value=\"Start\"></form>"));
 
         //STEPPER + JS OY
-        plen=fill_tcp_data_p(buf,plen,PSTR("<hr>\n<form method=get/>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("<hr><form method=get/>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<input type=hidden name=sw value=2/>"));
-        sprintf(oy, "\nSTEPS Vertical: <input type=range class=\"sliderV\" name=oy min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeV')\"/><span id=rangeV>%d</span>", steps_state_v, steps_state_v);
+        sprintf(oy, "\nObrót w pionie:<br> <input type=range class=\"slV\" name=oy min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeV')\"/><br><span>Pozycja: </span><span id=rangeV>%d</span>", steps_state_v, steps_state_v);
         plen=fill_tcp_data(buf, plen, oy);
-        //plen=fill_tcp_data_p(buf,plen,PSTR("\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=0 onchange=\"showValue(this.value,'rangeH')\"/>"));
-        //plen=fill_tcp_data_p(buf,plen,PSTR("<span id=rangeH>0</span>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("<script src=slider.js></script>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("\n<input type=submit value=\"STEPPER OY\"></form>\n"));
-        plen=fill_tcp_data_p(buf, plen, PSTR("<hr>\n<p>Atmega32+enc28j60 by Robert Mleczko</p>"));
-
-        //sprintf(test, "value=%d", steps_state);
-        //plen=fill_tcp_data(buf, plen, test);
+        plen=fill_tcp_data_p(buf,plen,PSTR("<br><input type=submit value=\"Start\"></form>"));
+        plen=fill_tcp_data_p(buf, plen, PSTR("<hr><p>Atmega32+enc28j60 Robert Mleczko 2013</p>"));
 
         //plen=fill_tcp_data_p(buf,plen,PSTR("\n<a href=\".\">[refresh status]</a>\n"));
         //plen=fill_tcp_data_p(buf,plen,PSTR("</pre>\n"));
-
-        //sprintf(html, "<hr>\n<form method=get/><input type=hidden name=sw value=2/>\nSTEPS Horizontal: <input type=range class=\"sliderH\" name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><script src=slider.js></script>\n<input type=submit value=\"MOVE STEPPER OX\"></form>\n", steps_state);
-        //plen=fill_tcp_data(buf, plen, html);
 
         return(plen);
 }
