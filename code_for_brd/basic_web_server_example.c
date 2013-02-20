@@ -470,9 +470,15 @@ ISR(TIMER0_COMP_vect){
 //OBSLUGA PRZERWANIA INT1
 ISR(INT1_vect){
 	s1_stop_flag = 1;
+	silnik_hold();
+	steps_todo = 0;
+	steps_state_h = 0;
 }
 
 //OBSLUGA PRZERWANIA INT1
 ISR(INT0_vect){
 	s2_stop_flag = 1;
+	silnik_hold();
+	steps_todo = 0;
+	steps_state_v = 0;
 }
