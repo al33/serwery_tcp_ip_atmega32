@@ -246,9 +246,9 @@ uint16_t print_webpage(uint8_t *buf, uint8_t on)
         //STEPPER + JS OX
         plen=fill_tcp_data_p(buf,plen,PSTR("<hr><form method=get/>"));
         plen=fill_tcp_data_p(buf,plen,PSTR("<input type=hidden name=sw value=2/>"));
-        sprintf(ox, "Obrót w poziomie:<br> <input type=range name=ox min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeH')\"/><br><span>Pozycja: </span><span id=rangeH>%d</span>", steps_state_h, steps_state_h);
+        sprintf(ox, "Obrót w poziomie:<br> <input type=range name=ox min=0 max=100 step=5 value=%d onchange=\"showValue(this.value,'rangeH')\"/><br><span>Pozycja: </span><span id=rangeH>%d</span>", steps_state_h, steps_state_h);
         plen=fill_tcp_data(buf, plen, ox);
-        plen=fill_tcp_data_p(buf,plen,PSTR("<br><input type=submit value=\"Start\"></form>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("<br><input type=submit value=Start></form>"));
 
         //STEPPER + JS OY
         plen=fill_tcp_data_p(buf,plen,PSTR("<hr><form method=get/>"));

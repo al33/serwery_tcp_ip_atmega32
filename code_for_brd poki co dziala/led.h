@@ -19,5 +19,8 @@
 #define DATA_REC_LED_ON PORTD &= ~DATA_REC_LED
 #define DATA_REC_LED_OFF PORTD |= DATA_REC_LED
 
+#include <avr/io.h>
+
+uint8_t led_block_flag;
 
 #endif /* LED_H_ */

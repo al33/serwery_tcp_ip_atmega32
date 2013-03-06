@@ -5,8 +5,15 @@
  *      Author: Robert
  */
 
+#include <avr/io.h>
+#include <util/delay.h>
+#include "led.h"
+
 #ifndef STEP_H_
 #define STEP_H_
+
+#define OX 1
+#define OY 2
 
 /* definicje pinów steruj¹cych na osi OX */
 /*
@@ -21,19 +28,10 @@
 #define B2 (1<<PA0)
 
 /* definicje pinow sterujacych na osi OY */
-
-/*
-#define C1 (1<<PC7)
-#define C2 (1<<PC6)
-#define D1 (1<<PC5)
-#define D2 (1<<PC4)
-*/
 #define C1 (1<<PA7)
 #define C2 (1<<PA6)
 #define D1 (1<<PA5)
 #define D2 (1<<PA4)
-
-
 
 
 /* definicje kroków steruj¹cych prac¹ silnika na osi OX */
@@ -60,7 +58,9 @@ void kroki_lewo(void);
 void kroki_prawo(void);
 void kroki_gora(void);
 void kroki_dol(void);
-
 void silnik_hold(void);
+void stepper_move(void);
+void prepare_steps(uint8_t axis, uint8_t steps_received);
+void stepper_run(void);
 
 #endif /* STEP_H_ */
