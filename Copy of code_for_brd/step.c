@@ -23,12 +23,12 @@ extern uint8_t ms2_flag;
 
 void silnik_hold(void){
 	PORTA |= (A1);
-	PORTA |= (C1);
+	//PORTA |= (C1);
 	steps_todo = 0;
 }
 
 void silnik_stop(void) {
-	PORTA &= ~(A1|A2|B1|B2);
+	//PORTA &= ~(A1|A2|B1|B2);
 	PORTA &= ~(C1|C2|D1|D2);
 }
 
@@ -83,7 +83,7 @@ void kroki_dol(void) {
 void stepper_move(void) {
 	if(start_stepper && steps_todo){
 		if(left_dir){
-			S1_LED_ON;
+			s1_led_on();
 			if(ms2_flag){
 				kroki_lewo();
 				steps_todo --;
@@ -92,7 +92,7 @@ void stepper_move(void) {
 		}
 		if(right_dir)
 		{
-			S1_LED_ON;
+			s1_led_on();
 			if(ms2_flag){
 				kroki_prawo();
 				steps_todo --;
@@ -100,7 +100,7 @@ void stepper_move(void) {
 			}
 		}
 		if(down_dir){
-			S2_LED_ON;
+			s2_led_on();
 			if(ms2_flag){
 				kroki_dol();
 				steps_todo --;
@@ -108,7 +108,7 @@ void stepper_move(void) {
 			}
 		}
 		if(up_dir){
-			S2_LED_ON;
+			s2_led_on();
 			if(ms2_flag){
 				kroki_gora();
 				steps_todo --;
@@ -118,10 +118,10 @@ void stepper_move(void) {
 	}
 	else{
 		silnik_hold();
-		//silnik_stop();
+		silnik_stop();
 		start_stepper = 0;
-		S1_LED_OFF;
-		S2_LED_OFF;
+		s1_led_off();
+		s2_led_off();
 	}
 }
 //wyliczenie ilosci i kierunku krokow

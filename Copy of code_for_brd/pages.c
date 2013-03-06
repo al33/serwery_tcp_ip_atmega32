@@ -57,21 +57,22 @@ uint16_t print_webpage(uint8_t *buf)
         plen=fill_tcp_data_p(buf, plen, PSTR("<b>Kamera sterowana protoko³em TCP/IP</b>"));
 
         //STEPPER + JS OX
-        plen=fill_tcp_data_p(buf, plen, PSTR("<hr><form method=get/>"));
-        plen=fill_tcp_data_p(buf, plen, PSTR("<input type=hidden name=sw value=2/>"));
-        sprintf(ox, "Obrót w poziomie:<br> <input type=range name=ox min=0 max=100 step=5 value=%d onchange=\"showValue(this.value,'rangeH')\"/><br><span>Pozycja: </span><span id=rangeH>%d</span>", steps_state_h, steps_state_h);
+        plen=fill_tcp_data_p(buf, plen, PSTR("<hr><form method=get>"));
+        plen=fill_tcp_data_p(buf, plen, PSTR("<input type=hidden name=sw value=2>"));
+        sprintf(ox, "Obrót w poziomie:<br> <input type=range name=ox min=0 max=100 step=5 value=%d onchange=\"showValue(this.value,'rangeH')\"/><br>"
+        		"<span>Pozycja: </span><span id=rangeH>%d</span>", steps_state_h, steps_state_h);
         plen=fill_tcp_data(buf, plen, ox);
         plen=fill_tcp_data_p(buf, plen, PSTR("<br><input type=submit value=Start></form>"));
 
         //STEPPER + JS OY
-        plen=fill_tcp_data_p(buf,plen,PSTR("<hr><form method=get/>"));
-        plen=fill_tcp_data_p(buf,plen,PSTR("<input type=hidden name=sw value=2/>"));
-        sprintf(oy, "\nObrót w pionie:<br> <input type=range class=\"slV\" name=oy min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeV')\"/><br><span>Pozycja: </span><span id=rangeV>%d</span>", steps_state_v, steps_state_v);
+        plen=fill_tcp_data_p(buf,plen,PSTR("<hr><form method=get>"));
+        plen=fill_tcp_data_p(buf,plen,PSTR("<input type=hidden name=sw value=2>"));
+        sprintf(oy, "\nObrót w pionie:<br> <input type=range class=\"slV\" name=oy min=\"0\" max=\"100\" step=\"5\" value=%d onchange=\"showValue(this.value,'rangeV')\"/>"
+        		"<br><span>Pozycja: </span><span id=rangeV>%d</span>", steps_state_v, steps_state_v);
         plen=fill_tcp_data(buf, plen, oy);
         plen=fill_tcp_data_p(buf,plen,PSTR("<br><input type=submit value=\"Start\"></form>"));
         plen=fill_tcp_data_p(buf, plen, PSTR("<hr><p>Atmega32+enc28j60 Robert Mleczko 2013</p>"));
         return(plen);
-
 
 /* NIE DZIALA
     	char webpage[850] = "\

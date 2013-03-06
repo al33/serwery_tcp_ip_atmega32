@@ -103,25 +103,13 @@ void init() {
 
     silnik_stop();
 
-    // Dioda LED na PD7:
-    DDRD|= (1<<PD7);
-    PORTD &= ~(1<<PORTD7);// Dioda OFF
-
-    //Init diod LED dla silnikow
-    DDRD |= S1_LED;
-    DDRD |= S2_LED;
-    S1_LED_OFF;
-    S2_LED_OFF;
-
-    //Init diod LED dla przesylu danych
-    DDRD |= DATA_REC_LED;
-    DATA_REC_LED_OFF;
-
     //initialize the hardware driver for the enc28j60
     enc28j60Init(mymac);
     enc28j60PhyWrite(PHLCON,0x476);
 
     init_ip_arp_udp_tcp(mymac,myip,MYWWWPORT);
+
+    led_startup_on();
 }
 
 
@@ -130,7 +118,7 @@ int main(void){
     uint16_t response_length = 0;
 
 	init();
-
+	led_init();
 
     sei(); //odblokowanie przerwan
 
@@ -142,10 +130,10 @@ int main(void){
 		// read packet, handle ping and wait for a tcp packet:
 		buffer_position = packetloop_icmp_tcp(buf,enc28j60PacketReceive(BUFFER_SIZE, buf));
 		if(buffer_position){
-			DATA_REC_LED_ON;
+			data_led_on();
 		}
 		else {
-			DATA_REC_LED_OFF;
+			data_led_off();
 			continue;
 		}
 
@@ -188,10 +176,9 @@ int main(void){
 ISR(TIMER0_COMP_vect){
 	ms2_flag = 1;	/* ustawiamy flagê co 2ms */
 
-
 	if(++ms2_cnt>200) {	/* gdy licznik ms > 499 (minê³a 1 sekunda) */
-			//seconds2_flag=1;	/* ustaw flagê tykniêcia sekundy */
-		}
+		led_startup_off();
+	}
 }
 
 //OBSLUGA PRZERWANIA INT1

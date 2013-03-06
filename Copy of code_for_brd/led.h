@@ -23,4 +23,20 @@
 
 uint8_t led_block_flag;
 
+void led_init(void);
+
+void led_block(void);
+void led_unblock(void);
+void led_startup_on(void);
+void led_startup_off(void);
+
+void s1_led_on(void);
+void s1_led_off(void);
+
+void s2_led_on(void);
+void s2_led_off(void);
+
+void data_led_on(void);
+void data_led_off(void);
+
 #endif /* LED_H_ */
