@@ -20,66 +20,68 @@ uint8_t down_dir = 0;
 
 extern uint8_t ms2_flag;
 
-
-void silnik_hold(void){
+/* funkcja zatrzymujaca silnik 1, pozostawiajac napiecie na cewce */
+void silnik_hold(void) {
 	PORTA |= (A1);
 	//PORTA |= (C1);
 	steps_todo = 0;
 }
 
+/* funkcja zatrzymujaca silnik 2, wylaczenie napiecia cewek */
 void silnik_stop(void) {
 	//PORTA &= ~(A1|A2|B1|B2);
 	PORTA &= ~(C1|C2|D1|D2);
+	steps_todo = 0;
 }
 
 /* funkcja wykonuj¹ca cyklicznie kroki (obrót w lewo) */
 void kroki_lewo(void) {
 	static uint8_t kr;
 
-	if( kr == 0 ) { KROK1H; }
-	if( kr == 1 ) { KROK2H; }
-	if( kr == 2 ) { KROK3H; }
-	if( kr == 3 ) { KROK4H; }
+	if(kr == 0) {KROK1H;}
+	if(kr == 1) {KROK2H;}
+	if(kr == 2) {KROK3H;}
+	if(kr == 3) {KROK4H;}
 
-	if( ++kr > 3 ) kr=0;
+	if(++kr > 3) kr=0;
 }
 
 /* funkcja wykonuj¹ca cyklicznie kroki (obrót w prawo) */
 void kroki_prawo(void) {
 	static uint8_t kr;
 
-	if( kr == 0 ) { KROK4H; }
-	if( kr == 1 ) { KROK3H; }
-	if( kr == 2 ) { KROK2H; }
-	if( kr == 3 ) { KROK1H; }
+	if(kr == 0) {KROK4H;}
+	if(kr == 1) {KROK3H;}
+	if(kr == 2) {KROK2H;}
+	if(kr == 3) {KROK1H;}
 
-	if( ++kr > 3 ) kr=0;
+	if(++kr > 3) kr=0;
 }
 
 /* funkcja wykonuj¹ca cyklicznie kroki (obrót w gore) */
 void kroki_gora(void) {
 	static uint8_t kr;
 
-	if( kr == 0 ) { KROK1V; }
-	if( kr == 1 ) { KROK2V; }
-	if( kr == 2 ) { KROK3V; }
-	if( kr == 3 ) { KROK4V; }
+	if(kr == 0) {KROK1V;}
+	if(kr == 1) {KROK2V;}
+	if(kr == 2) {KROK3V;}
+	if(kr == 3) {KROK4V;}
 
-	if( ++kr > 3 ) kr=0;
+	if(++kr > 3) kr=0;
 }
 
 /* funkcja wykonuj¹ca cyklicznie kroki (obrót w dol) */
 void kroki_dol(void) {
 	static uint8_t kr;
 
-	if( kr == 0 ) { KROK4V; }
-	if( kr == 1 ) { KROK3V; }
-	if( kr == 2 ) { KROK2V; }
-	if( kr == 3 ) { KROK1V; }
+	if(kr == 0) {KROK4V;}
+	if(kr == 1) {KROK3V;}
+	if(kr == 2) {KROK2V;}
+	if(kr == 3) {KROK1V;}
 
-	if( ++kr > 3 ) kr=0;
+	if(++kr > 3) kr=0;
 }
-
+/* funkcja wykonuj¹ca komplet zadanych krokow */
 void stepper_move(void) {
 	if(start_stepper && steps_todo){
 		if(left_dir){
@@ -125,9 +127,10 @@ void stepper_move(void) {
 	}
 }
 //wyliczenie ilosci i kierunku krokow
-void prepare_steps(uint8_t axis, uint8_t steps_received){
-	if(axis == OX){
-		if(steps_state_h > steps_received){
+void prepare_steps(uint8_t axis, uint8_t steps_received) {
+	//Kroki dla osi OX
+	if(axis == OX) {
+		if(steps_state_h > steps_received) {
 			left_dir = 1;
 			right_dir = 0;
 			up_dir = 0;
@@ -135,7 +138,7 @@ void prepare_steps(uint8_t axis, uint8_t steps_received){
 			steps_todo = (steps_state_h - steps_received);
 			steps_state_h = steps_received;
 		}
-		else if(steps_received > steps_state_h){
+		else if(steps_received > steps_state_h) {
 			left_dir = 0;
 			right_dir = 1;
 			up_dir = 0;
@@ -145,8 +148,8 @@ void prepare_steps(uint8_t axis, uint8_t steps_received){
 		}
 	}
 	else{
-		//Krecenie po osi OY
-		if(steps_state_v > steps_received){
+		//Kroki dla osi OY
+		if(steps_state_v > steps_received) {
 			down_dir = 1;
 			up_dir = 0;
 			left_dir = 0;
@@ -154,7 +157,7 @@ void prepare_steps(uint8_t axis, uint8_t steps_received){
 			steps_todo = (steps_state_v - steps_received);
 			steps_state_v = steps_received;
 		}
-		else if(steps_received > steps_state_v){
+		else if(steps_received > steps_state_v) {
 			down_dir = 0;
 			up_dir = 1;
 			left_dir = 0;
@@ -166,6 +169,7 @@ void prepare_steps(uint8_t axis, uint8_t steps_received){
 	}
 }
 
+//Wlaczenie silnikow
 void stepper_run() {
 	start_stepper = 1;
 }

@@ -21,21 +21,22 @@ void led_init(void) {
     led_startup_on();
 }
 
+//blokowanie diody przy uruchomieniu ukladu
 void led_block(void) {
 	led_block_flag = 1;
 }
-
+//odblokowanie diody po uruchomieniu ukladu
 void led_unblock(void) {
 	led_block_flag = 0;
 }
-
+//Wlaczanie diod przy uruchomieniu ukladu
 void led_startup_on(void)  {
 	led_block();
 	S1_LED_ON;
 	S2_LED_ON;
 	DATA_REC_LED_ON;
 }
-
+//Gaszenie i odblokowanie diod po uruchomieniu ukladu
 void led_startup_off(void) {
 	S1_LED_OFF;
 	S2_LED_OFF;
