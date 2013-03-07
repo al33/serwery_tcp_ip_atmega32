@@ -21,7 +21,7 @@ uint8_t analyse_get_url(char *str) {
 	else if (strncmp("/style.css", str, 9)==0)
 		return CSS_ACTION;
 
-	// str is now end of ip adress
+	// str jest koncem adresu url po /
 	if (find_key_val(str, result, 5, "sw")) {
 		action = atoi(result);
 		switch(action){

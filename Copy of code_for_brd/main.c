@@ -71,7 +71,7 @@ void init() {
 	//ustawienie TIMER0 dla F_CPU=20MHz
 	TCCR0 |= (1<<WGM01);				 //tryb CTC
 	TCCR0 |= (1<<CS02)|(1<<CS00);		 //preskaler = 1024
-	//OCR0 = 48;						 //przepelnienie dla 400Hz
+	//OCR0 = 48;						 //przepelnienie dla 400Hz (predkosc silnika)
 	//OCR0 = 97;						 //200Hz
 	//OCR0 = 130;						 //150Hz
 	OCR0 = 195;							 //100Hz
