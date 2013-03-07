@@ -55,7 +55,11 @@ uint16_t print_webpage(uint8_t *buf) {
         plen=fill_tcp_data_p(buf, plen, PSTR("<hr><form method=get>"));
         plen=fill_tcp_data_p(buf, plen, PSTR("<input type=hidden name=sw value=2>"));
         sprintf(ox, "Obrót w poziomie:<br> <input type=range name=ox min=0 max=80 step=5 value=%d onchange=\"showValue(this.value,'rangeH')\"/><br>"
-        		"<span>Pozycja: </span><span id=rangeH>%d</span>", steps_state_h, steps_state_h);
+        		"<span>Pozycja: </span><span id=rangeH>%d</span><span>&deg</span>", steps_state_h, steps_state_h);
+        //zmiana drugiego steps_state_h pokazuje wartosc stopni ale dopiero po wyslaniu formularza,
+        //zmiana pierwszego steps_state po wyslaniu formularza przestawia suwak na pozycje zywnaczona przez stopnie, co jest zle.
+        //js powinien konwertowac steps_state_h na stopnie i je wyswietlac
+        //formularz do urla musi wysylac liczbe krokow a nie stopni
         plen=fill_tcp_data(buf, plen, ox);
         plen=fill_tcp_data_p(buf, plen, PSTR("<br><input type=submit value=Start></form>"));
 
